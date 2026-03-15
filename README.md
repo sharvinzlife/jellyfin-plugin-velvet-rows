@@ -17,16 +17,14 @@ It is designed to pair with [Home Screen Sections](https://github.com/IAmParadox
 - English Movies - Newly Released
 - English TV Shows - Newly Added
 - English TV Shows - Newly Released
-- Tamil Movies - Newly Added
-- Tamil Movies - Newly Released
 
 ## Why it exists
 
-Plex-style discovery rails feel great, but Jellyfin home screens often need more curation when media is split across language-specific libraries or mixed libraries. Velvet Rows gives you focused shelves without forking the whole home screen experience.
+ Plex-style discovery rails feel great, but Jellyfin home screens often need more curation when media is split across language-specific libraries or mixed libraries. Velvet Rows gives you focused shelves without forking the whole home screen experience.
 
 ## Highlights
 
-- Dedicated movie shelves for English, Malayalam, and Tamil libraries
+- Dedicated movie shelves for English and Malayalam libraries
 - English TV shelves for your main TV library
 - Metadata-aware Malayalam TV shelves that can filter a shared TV library or use a dedicated Malayalam TV library
 - Smarter newly released sorting with fallback to production year and creation time when release metadata is sparse
@@ -47,7 +45,6 @@ Velvet Rows exposes a management page inside Jellyfin where you can configure:
 - English movie library IDs
 - English TV library IDs
 - Malayalam movie library IDs
-- Tamil movie library IDs
 - Malayalam TV source library IDs
 - Malayalam TV metadata match terms
 

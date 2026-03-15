@@ -12,8 +12,6 @@ public class PluginConfiguration : BasePluginConfiguration
 
     public string MalayalamMovieLibraryIds { get; set; } = string.Empty;
 
-    public string TamilMovieLibraryIds { get; set; } = string.Empty;
-
     public string MalayalamTvLibraryIds { get; set; } = string.Empty;
 
     public string MalayalamTvMatchTerms { get; set; } = "malayalam, മലയാളം";

@@ -32,7 +32,7 @@
                     <div class="heroCopy">
                         <span class="eyebrow">Curated home screen plugin</span>
                         <h1>Velvet Rows</h1>
-                        <p>Design elegant discovery rails for Malayalam, English, and Tamil media with smarter release sorting, mixed-library Malayalam TV matching, and polished homepage curation.</p>
+                        <p>Design elegant discovery rails for Malayalam and English media with smarter release sorting, mixed-library Malayalam TV matching, and polished homepage curation.</p>
                         <div class="statusChips">
                             <span class="chip live">Home Screen Sections</span>
                             <span class="chip live">Plugin Pages</span>
@@ -66,10 +66,6 @@
                         <label class="fieldLabel" for="malayalamMovieLibraryIds">Malayalam movie library IDs</label>
                         <textarea id="malayalamMovieLibraryIds" class="emby-input rowsInput" rows="2" spellcheck="false" placeholder="a104632f6a4906d2b9e6bd5e251d5b2d"></textarea>
                         <div class="fieldHelp">Publishes Malayalam Movies - Newly Added and Malayalam Movies - Newly Released.</div>
-
-                        <label class="fieldLabel" for="tamilMovieLibraryIds">Tamil movie library IDs</label>
-                        <textarea id="tamilMovieLibraryIds" class="emby-input rowsInput" rows="2" spellcheck="false" placeholder="Add a Tamil movie library when ready"></textarea>
-                        <div class="fieldHelp">Publishes Tamil Movies - Newly Added and Tamil Movies - Newly Released.</div>
 
                         <label class="fieldLabel" for="malayalamTvLibraryIds">Malayalam TV source library IDs</label>
                         <textarea id="malayalamTvLibraryIds" class="emby-input rowsInput" rows="2" spellcheck="false" placeholder="f0cc8253-b4d1-07a2-da9a-6864e97a2251"></textarea>
@@ -126,6 +122,7 @@
                         <ul class="checkList">
                             <li>Keep Home Screen Sections and Plugin Pages enabled.</li>
                             <li>Use the dedicated Malayalam TV library when available for the cleanest results.</li>
+                            <li>Tamil titles in your Malayalam library are intentionally treated as part of the Malayalam shelves.</li>
                             <li>After saving, refresh the dashboard and reorder sections in Home Screen Sections if you want a different shelf order.</li>
                         </ul>
                     </section>
@@ -203,7 +200,6 @@
                 englishMovieLibraryIds: page.querySelector('#englishMovieLibraryIds'),
                 englishTvLibraryIds: page.querySelector('#englishTvLibraryIds'),
                 malayalamMovieLibraryIds: page.querySelector('#malayalamMovieLibraryIds'),
-                tamilMovieLibraryIds: page.querySelector('#tamilMovieLibraryIds'),
                 malayalamTvLibraryIds: page.querySelector('#malayalamTvLibraryIds'),
                 malayalamTvMatchTerms: page.querySelector('#malayalamTvMatchTerms')
             };
@@ -231,22 +227,19 @@
                 var englishMovieCount = countIds(fields.englishMovieLibraryIds.value);
                 var englishTvCount = countIds(fields.englishTvLibraryIds.value);
                 var malayalamMovieCount = countIds(fields.malayalamMovieLibraryIds.value);
-                var tamilMovieCount = countIds(fields.tamilMovieLibraryIds.value);
                 var malayalamTvCount = countIds(fields.malayalamTvLibraryIds.value);
                 var malayalamTvTermsReady = normalizeTerms(fields.malayalamTvMatchTerms.value).length > 0;
                 var configuredGroups = 0;
                 if (englishMovieCount > 0) { configuredGroups += 1; }
                 if (englishTvCount > 0) { configuredGroups += 1; }
                 if (malayalamMovieCount > 0) { configuredGroups += 1; }
-                if (tamilMovieCount > 0) { configuredGroups += 1; }
                 if (malayalamTvCount > 0 || malayalamTvTermsReady) { configuredGroups += 1; }
-                configuredCount.textContent = configuredGroups + ' of 5 active';
+                configuredCount.textContent = configuredGroups + ' of 4 active';
                 previewList.innerHTML = [
                     previewRow('Malayalam Movies', 'Newly added and newly released Malayalam movie rails.', malayalamMovieCount),
                     previewRow('Malayalam TV Shows', 'Newly added and newly released Malayalam TV rails.', malayalamTvCount, malayalamTvTermsReady),
                     previewRow('English Movies', 'Newly added and newly released English movie rails.', englishMovieCount),
-                    previewRow('English TV Shows', 'Newly added and newly released English TV rails.', englishTvCount),
-                    previewRow('Tamil Movies', 'Newly added and newly released Tamil movie rails.', tamilMovieCount)
+                    previewRow('English TV Shows', 'Newly added and newly released English TV rails.', englishTvCount)
                 ].join('');
             }
             function loadConfig() {
@@ -257,7 +250,6 @@
                     fields.englishMovieLibraryIds.value = config.EnglishMovieLibraryIds || '';
                     fields.englishTvLibraryIds.value = config.EnglishTvLibraryIds || '';
                     fields.malayalamMovieLibraryIds.value = config.MalayalamMovieLibraryIds || '';
-                    fields.tamilMovieLibraryIds.value = config.TamilMovieLibraryIds || '';
                     fields.malayalamTvLibraryIds.value = config.MalayalamTvLibraryIds || '';
                     fields.malayalamTvMatchTerms.value = config.MalayalamTvMatchTerms || 'malayalam, മലയാളം';
                     renderPreview();
@@ -271,7 +263,6 @@
                 configCache.EnglishMovieLibraryIds = normalizeIds(fields.englishMovieLibraryIds.value);
                 configCache.EnglishTvLibraryIds = normalizeIds(fields.englishTvLibraryIds.value);
                 configCache.MalayalamMovieLibraryIds = normalizeIds(fields.malayalamMovieLibraryIds.value);
-                configCache.TamilMovieLibraryIds = normalizeIds(fields.tamilMovieLibraryIds.value);
                 configCache.MalayalamTvLibraryIds = normalizeIds(fields.malayalamTvLibraryIds.value);
                 configCache.MalayalamTvMatchTerms = normalizeTerms(fields.malayalamTvMatchTerms.value) || 'malayalam, മലയാളം';
                 ApiClient.updatePluginConfiguration(pluginUniqueId, configCache).then(function (result) {

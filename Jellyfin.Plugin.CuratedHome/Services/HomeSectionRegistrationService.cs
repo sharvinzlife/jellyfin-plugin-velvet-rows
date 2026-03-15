@@ -121,6 +121,17 @@ public sealed class HomeSectionRegistrationService : BackgroundService
                     changed = true;
                 }
 
+                var staleCuratedSections = enabledSections
+                    .Where(x => ((string?)x)?.StartsWith("Curated", StringComparison.Ordinal) == true)
+                    .Where(x => !curatedSectionIds.Contains((string?)x ?? string.Empty, StringComparer.Ordinal))
+                    .ToArray();
+
+                foreach (var stale in staleCuratedSections)
+                {
+                    stale.Remove();
+                    changed = true;
+                }
+
                 foreach (var sectionId in curatedSectionIds)
                 {
                     if (enabledSections.Any(x => string.Equals((string?)x, sectionId, StringComparison.Ordinal)))

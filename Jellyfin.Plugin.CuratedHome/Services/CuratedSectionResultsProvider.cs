@@ -55,8 +55,6 @@ public sealed class CuratedSectionResultsProvider
             "english_movies_latest" => GetLatestMovies(payload.UserId, config.EnglishMovieLibraryIds, limit),
             "english_shows_recent" => GetRecentlyAddedShows(payload.UserId, config.EnglishTvLibraryIds, string.Empty, limit, false),
             "english_shows_latest" => GetLatestShows(payload.UserId, config.EnglishTvLibraryIds, string.Empty, limit, false),
-            "tamil_movies_recent" => GetRecentlyAddedMovies(payload.UserId, config.TamilMovieLibraryIds, limit),
-            "tamil_movies_latest" => GetLatestMovies(payload.UserId, config.TamilMovieLibraryIds, limit),
             _ => Array.Empty<BaseItem>(),
         };
 

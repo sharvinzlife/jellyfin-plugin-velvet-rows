@@ -12,7 +12,5 @@ public static class SectionDefinitions
         new("CuratedEnglishMoviesLatest", "English Movies - Newly Released", "english_movies_latest", "movies"),
         new("CuratedEnglishShowsRecentlyAdded", "English TV Shows - Newly Added", "english_shows_recent", "tvshows"),
         new("CuratedEnglishShowsLatest", "English TV Shows - Newly Released", "english_shows_latest", "tvshows"),
-        new("CuratedTamilMoviesRecentlyAdded", "Tamil Movies - Newly Added", "tamil_movies_recent", "movies"),
-        new("CuratedTamilMoviesLatest", "Tamil Movies - Newly Released", "tamil_movies_latest", "movies"),
     ];
 }
