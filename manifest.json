@@ -9,6 +9,14 @@
     "imageUrl": "https://raw.githubusercontent.com/sharvinzlife/jellyfin-plugin-velvet-rows/main/assets/velvet-rows-logo.png",
     "versions": [
       {
+        "version": "1.2.0.0",
+        "changelog": "- Add English TV shelves and release fallback\n- Update manifest for v1.1.0.0",
+        "targetAbi": "10.11.6.0",
+        "sourceUrl": "https://github.com/sharvinzlife/jellyfin-plugin-velvet-rows/releases/download/v1.2.0.0/velvet-rows_1.2.0.0.zip",
+        "checksum": "7bb9c1b79425e62be6d84e2741b0d38e",
+        "timestamp": "2026-03-15T22:59:56Z"
+      },
+      {
         "version": "1.1.0.0",
         "changelog": "- Add release metadata and mixed-library curation\n- Initial commit",
         "targetAbi": "10.11.6.0",
