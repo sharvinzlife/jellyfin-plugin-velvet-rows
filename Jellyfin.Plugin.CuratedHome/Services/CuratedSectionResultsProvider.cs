@@ -1,6 +1,6 @@
+using Jellyfin.Data.Enums;
 using Jellyfin.Plugin.CuratedHome.Configuration;
 using Jellyfin.Plugin.CuratedHome.Model;
-using Jellyfin.Data.Enums;
 using MediaBrowser.Controller.Dto;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Entities.TV;
@@ -14,6 +14,8 @@ namespace Jellyfin.Plugin.CuratedHome.Services;
 
 public sealed class CuratedSectionResultsProvider
 {
+    private static readonly string[] DefaultMalayalamTerms = ["malayalam", "മലയാളം"];
+
     private readonly ILibraryManager _libraryManager;
     private readonly IUserManager _userManager;
     private readonly IDtoService _dtoService;
@@ -47,10 +49,12 @@ public sealed class CuratedSectionResultsProvider
         {
             "malayalam_movies_recent" => GetRecentlyAddedMovies(payload.UserId, config.MalayalamMovieLibraryIds, limit),
             "malayalam_movies_latest" => GetLatestMovies(payload.UserId, config.MalayalamMovieLibraryIds, limit),
+            "malayalam_shows_recent" => GetRecentlyAddedShows(payload.UserId, config.MalayalamTvLibraryIds, config.MalayalamTvMatchTerms, limit),
+            "malayalam_shows_latest" => GetLatestShows(payload.UserId, config.MalayalamTvLibraryIds, config.MalayalamTvMatchTerms, limit),
             "english_movies_recent" => GetRecentlyAddedMovies(payload.UserId, config.EnglishMovieLibraryIds, limit),
             "english_movies_latest" => GetLatestMovies(payload.UserId, config.EnglishMovieLibraryIds, limit),
-            "malayalam_shows_recent" => GetRecentlyAddedShows(payload.UserId, config.MalayalamTvLibraryIds, limit),
-            "malayalam_shows_latest" => GetLatestShows(payload.UserId, config.MalayalamTvLibraryIds, limit),
+            "tamil_movies_recent" => GetRecentlyAddedMovies(payload.UserId, config.TamilMovieLibraryIds, limit),
+            "tamil_movies_latest" => GetLatestMovies(payload.UserId, config.TamilMovieLibraryIds, limit),
             _ => Array.Empty<BaseItem>(),
         };
 
@@ -129,7 +133,7 @@ public sealed class CuratedSectionResultsProvider
             .Take(limit);
     }
 
-    private IEnumerable<BaseItem> GetRecentlyAddedShows(Guid userId, string configuredLibraryIds, int limit)
+    private IEnumerable<BaseItem> GetRecentlyAddedShows(Guid userId, string configuredLibraryIds, string configuredMatchTerms, int limit)
     {
         var user = _userManager.GetUserById(userId);
         if (user is null)
@@ -155,17 +159,18 @@ public sealed class CuratedSectionResultsProvider
             .GroupBy(x => x.Series!.Id)
             .Select(g => new
             {
-                SeriesId = g.Key,
+                Series = g.First().Series!,
                 SortDate = g.Max(x => x.DateCreated),
             })
+            .Where(x => MatchesConfiguredTerms(x.Series, configuredMatchTerms))
             .OrderByDescending(x => x.SortDate)
             .Take(limit)
             .ToArray();
 
-        return ResolveSeriesInOrder(userId, seriesOrder.Select(x => x.SeriesId).ToArray());
+        return ResolveSeriesInOrder(userId, seriesOrder.Select(x => x.Series.Id).ToArray());
     }
 
-    private IEnumerable<BaseItem> GetLatestShows(Guid userId, string configuredLibraryIds, int limit)
+    private IEnumerable<BaseItem> GetLatestShows(Guid userId, string configuredLibraryIds, string configuredMatchTerms, int limit)
     {
         var user = _userManager.GetUserById(userId);
         if (user is null)
@@ -183,10 +188,39 @@ public sealed class CuratedSectionResultsProvider
                 ParentId = folder.Id,
                 IsMissing = false,
             }).Items)
+            .OfType<Series>()
             .Where(x => x.PremiereDate.HasValue)
+            .Where(x => MatchesConfiguredTerms(x, configuredMatchTerms))
             .DistinctBy(x => x.Id)
             .OrderByDescending(x => x.PremiereDate)
             .Take(limit);
+    }
+
+    private bool MatchesConfiguredTerms(BaseItem item, string configuredMatchTerms)
+    {
+        var searchTerms = configuredMatchTerms
+            .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .DefaultIfEmpty(string.Empty)
+            .ToArray();
+
+        if (searchTerms.Length == 1 && string.IsNullOrWhiteSpace(searchTerms[0]))
+        {
+            searchTerms = DefaultMalayalamTerms;
+        }
+
+        var searchableParts = new List<string>
+        {
+            item.Name ?? string.Empty,
+            item.Path ?? string.Empty,
+            item.Overview ?? string.Empty,
+        };
+
+        searchableParts.AddRange(item.Genres ?? []);
+        searchableParts.AddRange(item.Tags ?? []);
+
+        var searchable = string.Join('\n', searchableParts.Where(x => !string.IsNullOrWhiteSpace(x)));
+        return searchTerms.Any(term => searchable.Contains(term, StringComparison.OrdinalIgnoreCase));
     }
 
     private Folder[] GetConfiguredLibraries(Guid userId, string expectedCollectionType, string configuredLibraryIds)

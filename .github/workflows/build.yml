@@ -1,0 +1,35 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Publish plugin
+        run: |
+          dotnet publish Jellyfin.Plugin.CuratedHome/Jellyfin.Plugin.CuratedHome.csproj -c Release -o dist/publish
+          cp assets/velvet-rows-logo.png dist/publish/logo.png
+          cd dist/publish
+          zip -r ../velvet-rows_ci.zip .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: velvet-rows-build
+          path: |
+            dist/publish
+            dist/velvet-rows_ci.zip

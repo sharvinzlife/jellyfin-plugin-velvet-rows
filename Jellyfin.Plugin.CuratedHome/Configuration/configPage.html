@@ -11,31 +11,16 @@
             <form class="velvetRowsForm">
                 <div class="heroPanel">
                     <div class="heroMark" aria-hidden="true">
-                        <svg viewBox="0 0 160 160" role="img">
-                            <defs>
-                                <linearGradient id="heroBg" x1="0" y1="0" x2="1" y2="1">
-                                    <stop offset="0%" stop-color="#0d1b2a"></stop>
-                                    <stop offset="100%" stop-color="#132238"></stop>
-                                </linearGradient>
-                                <linearGradient id="heroGlow" x1="0" y1="0" x2="1" y2="1">
-                                    <stop offset="0%" stop-color="#efb666"></stop>
-                                    <stop offset="100%" stop-color="#5ed0c2"></stop>
-                                </linearGradient>
-                            </defs>
-                            <rect x="10" y="10" width="140" height="140" rx="36" fill="url(#heroBg)"></rect>
-                            <path d="M45 42H68L80 105L92 42H115L88 118H72Z" fill="url(#heroGlow)"></path>
-                            <rect x="38" y="121" width="84" height="8" rx="4" fill="#23435a"></rect>
-                            <rect x="52" y="132" width="56" height="8" rx="4" fill="#315f78"></rect>
-                        </svg>
+                        <img src="logo.png" alt="Velvet Rows logo" class="heroLogo" />
                     </div>
                     <div class="heroCopy">
                         <span class="eyebrow">Curated home screen plugin</span>
                         <h1>Velvet Rows</h1>
-                        <p>Shape elegant homepage rails for English movies, Malayalam cinema, and Malayalam TV without hand-editing config files.</p>
+                        <p>Design elegant discovery rails for Malayalam, English, and Tamil media with library routing, metadata-aware TV matching, and release-ready homepage curation.</p>
                         <div class="statusChips">
                             <span class="chip live">Home Screen Sections</span>
                             <span class="chip live">Plugin Pages</span>
-                            <span class="chip subtle">Jellyfin 10.11.x</span>
+                            <span class="chip subtle">Mixed-library Malayalam TV support</span>
                         </div>
                     </div>
                 </div>
@@ -44,29 +29,42 @@
                     <section class="panel cardStack">
                         <div class="panelHeader">
                             <div>
-                                <h2>Library routing</h2>
-                                <p>Use comma-separated library IDs. Leave Malayalam TV blank until you have a dedicated library.</p>
+                                <h2>Routing and limits</h2>
+                                <p>Comma-separated library IDs. Malayalam TV can point at a dedicated TV library or a mixed TV library.</p>
                             </div>
                             <span class="pill">Manage</span>
                         </div>
+
+                        <label class="fieldLabel" for="rowLimit">Items per row</label>
+                        <input id="rowLimit" class="emby-input limitInput" type="number" min="1" max="50" step="1" />
+                        <div class="fieldHelp">Velvet Rows caps this between 1 and 50 to keep shelves fast.</div>
+
                         <label class="fieldLabel" for="englishMovieLibraryIds">English movie library IDs</label>
-                        <textarea id="englishMovieLibraryIds" class="emby-input rowsInput" rows="3" spellcheck="false" placeholder="f137a2dd21bbc1b99aa5c0f6bf02a805"></textarea>
-                        <div class="fieldHelp">Powers: English Movies - Newly Added and English Movies - Newly Released</div>
+                        <textarea id="englishMovieLibraryIds" class="emby-input rowsInput" rows="2" spellcheck="false" placeholder="f137a2dd21bbc1b99aa5c0f6bf02a805"></textarea>
+                        <div class="fieldHelp">Publishes English Movies - Newly Added and English Movies - Newly Released.</div>
 
                         <label class="fieldLabel" for="malayalamMovieLibraryIds">Malayalam movie library IDs</label>
-                        <textarea id="malayalamMovieLibraryIds" class="emby-input rowsInput" rows="3" spellcheck="false" placeholder="a104632f6a4906d2b9e6bd5e251d5b2d"></textarea>
-                        <div class="fieldHelp">Powers: Malayalam Movies - Newly Added and Malayalam Movies - Newly Released</div>
+                        <textarea id="malayalamMovieLibraryIds" class="emby-input rowsInput" rows="2" spellcheck="false" placeholder="a104632f6a4906d2b9e6bd5e251d5b2d"></textarea>
+                        <div class="fieldHelp">Publishes Malayalam Movies - Newly Added and Malayalam Movies - Newly Released.</div>
 
-                        <label class="fieldLabel" for="malayalamTvLibraryIds">Malayalam TV library IDs</label>
-                        <textarea id="malayalamTvLibraryIds" class="emby-input rowsInput" rows="3" spellcheck="false" placeholder="Add a dedicated Malayalam TV library ID when ready"></textarea>
-                        <div class="fieldHelp">Powers: Malayalam TV Shows - Newly Added and Malayalam TV Shows - Newly Released</div>
+                        <label class="fieldLabel" for="tamilMovieLibraryIds">Tamil movie library IDs</label>
+                        <textarea id="tamilMovieLibraryIds" class="emby-input rowsInput" rows="2" spellcheck="false" placeholder="Add a Tamil movie library when ready"></textarea>
+                        <div class="fieldHelp">Publishes Tamil Movies - Newly Added and Tamil Movies - Newly Released.</div>
+
+                        <label class="fieldLabel" for="malayalamTvLibraryIds">Malayalam TV source library IDs</label>
+                        <textarea id="malayalamTvLibraryIds" class="emby-input rowsInput" rows="2" spellcheck="false" placeholder="Leave blank to search all TV libraries"></textarea>
+                        <div class="fieldHelp">Use dedicated Malayalam TV libraries if you have them. Mixed TV libraries work too.</div>
+
+                        <label class="fieldLabel" for="malayalamTvMatchTerms">Malayalam TV match terms</label>
+                        <textarea id="malayalamTvMatchTerms" class="emby-input rowsInput" rows="2" spellcheck="false" placeholder="malayalam, മലയാളം"></textarea>
+                        <div class="fieldHelp">Velvet Rows matches these terms against TV metadata like title, overview, tags, genres, and path.</div>
                     </section>
 
                     <section class="panel insightPanel">
                         <div class="panelHeader">
                             <div>
-                                <h2>Row preview</h2>
-                                <p>A quick look at what Velvet Rows will publish to the homepage.</p>
+                                <h2>Curated row preview</h2>
+                                <p>A live summary of the shelves Velvet Rows is prepared to publish.</p>
                             </div>
                             <span class="pill accent" id="configuredCount">0 configured</span>
                         </div>
@@ -78,22 +76,22 @@
                     <section class="panel notesPanel">
                         <div class="panelHeader">
                             <div>
-                                <h2>Release logic</h2>
-                                <p>How each row decides what belongs on the shelf.</p>
+                                <h2>Detection logic</h2>
+                                <p>How the shelves decide what to surface.</p>
                             </div>
                         </div>
                         <div class="logicGrid">
                             <article class="logicCard">
                                 <h3>Newly Added</h3>
-                                <p>Sorted by the newest library additions, ideal for recent OCI transfers and fresh catalog drops.</p>
+                                <p>Ranks the freshest library additions so OCI transfers and recent drops rise to the top immediately.</p>
                             </article>
                             <article class="logicCard">
                                 <h3>Newly Released</h3>
-                                <p>Movies use premiere dates. Malayalam TV uses series premiere dates so it feels closer to a premium discovery rail.</p>
+                                <p>Movies sort by premiere date, while Malayalam TV sorts by series premiere date for a cleaner discovery rail.</p>
                             </article>
                             <article class="logicCard">
-                                <h3>Language-aware</h3>
-                                <p>Point each row at the exact library IDs you want, keeping Malayalam shelves distinct from the broader English catalog.</p>
+                                <h3>Metadata-aware TV</h3>
+                                <p>Malayalam TV rows can filter a mixed TV library using match terms instead of demanding a dedicated Malayalam TV library.</p>
                             </article>
                         </div>
                     </section>
@@ -102,13 +100,13 @@
                         <div class="panelHeader">
                             <div>
                                 <h2>Rollout notes</h2>
-                                <p>Helpful reminders while you tune the experience.</p>
+                                <p>Quick reminders while you tune the home screen.</p>
                             </div>
                         </div>
                         <ul class="checkList">
-                            <li>Install Home Screen Sections before expecting rows to appear.</li>
-                            <li>Use Plugin Pages for the settings experience.</li>
-                            <li>After saving, refresh the Jellyfin dashboard and reorder sections in Home Screen Sections if desired.</li>
+                            <li>Install or keep Home Screen Sections and Plugin Pages enabled.</li>
+                            <li>If Malayalam TV uses a shared TV library, keep the default match terms or add your own.</li>
+                            <li>After saving, refresh the dashboard and reorder sections in Home Screen Sections if you want a different shelf order.</li>
                         </ul>
                     </section>
                 </div>
@@ -166,6 +164,15 @@
         .velvetRowsPage .heroMark {
             width: 120px;
             height: 120px;
+            display: grid;
+            place-items: center;
+        }
+
+        .velvetRowsPage .heroLogo {
+            width: 120px;
+            height: 120px;
+            border-radius: 28px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.28);
         }
 
         .velvetRowsPage .heroCopy h1 {
@@ -262,7 +269,8 @@
             margin: 18px 0 8px;
         }
 
-        .velvetRowsPage .rowsInput {
+        .velvetRowsPage .rowsInput,
+        .velvetRowsPage .limitInput {
             width: 100%;
             box-sizing: border-box;
             border-radius: 18px;
@@ -270,9 +278,17 @@
             background: rgba(7, 13, 22, 0.75);
             color: var(--vr-copy);
             padding: 14px 16px;
-            min-height: 88px;
+        }
+
+        .velvetRowsPage .rowsInput {
+            min-height: 74px;
             font-family: "SFMono-Regular", Consolas, monospace;
             resize: vertical;
+        }
+
+        .velvetRowsPage .limitInput {
+            max-width: 160px;
+            min-height: 52px;
         }
 
         .velvetRowsPage .previewList {
@@ -363,15 +379,26 @@
             var page = document.querySelector('.velvetRowsPage');
             var form = page.querySelector('.velvetRowsForm');
             var fields = {
+                rowLimit: page.querySelector('#rowLimit'),
                 englishMovieLibraryIds: page.querySelector('#englishMovieLibraryIds'),
                 malayalamMovieLibraryIds: page.querySelector('#malayalamMovieLibraryIds'),
-                malayalamTvLibraryIds: page.querySelector('#malayalamTvLibraryIds')
+                tamilMovieLibraryIds: page.querySelector('#tamilMovieLibraryIds'),
+                malayalamTvLibraryIds: page.querySelector('#malayalamTvLibraryIds'),
+                malayalamTvMatchTerms: page.querySelector('#malayalamTvMatchTerms')
             };
             var previewList = page.querySelector('#previewList');
             var configuredCount = page.querySelector('#configuredCount');
             var configCache = null;
 
             function normalizeIds(value) {
+                return value
+                    .split(',')
+                    .map(function (item) { return item.trim(); })
+                    .filter(Boolean)
+                    .join(', ');
+            }
+
+            function normalizeTerms(value) {
                 return value
                     .split(',')
                     .map(function (item) { return item.trim(); })
@@ -391,9 +418,12 @@
                     .length;
             }
 
-            function previewRow(title, summary, count) {
-                var stateClass = count > 0 ? 'ready' : 'waiting';
-                var stateLabel = count > 0 ? count + ' library id' + (count > 1 ? 's' : '') : 'Needs routing';
+            function previewRow(title, summary, count, stateOverride) {
+                var ready = stateOverride || count > 0;
+                var stateClass = ready ? 'ready' : 'waiting';
+                var stateLabel = ready
+                    ? (count > 0 ? count + ' library id' + (count > 1 ? 's' : '') : 'Metadata matched')
+                    : 'Needs routing';
 
                 return [
                     '<article class="previewCard">',
@@ -409,7 +439,9 @@
             function renderPreview() {
                 var englishCount = countIds(fields.englishMovieLibraryIds.value);
                 var malayalamMovieCount = countIds(fields.malayalamMovieLibraryIds.value);
+                var tamilMovieCount = countIds(fields.tamilMovieLibraryIds.value);
                 var malayalamTvCount = countIds(fields.malayalamTvLibraryIds.value);
+                var malayalamTvTermsReady = normalizeTerms(fields.malayalamTvMatchTerms.value).length > 0;
                 var configuredGroups = 0;
 
                 if (englishCount > 0) {
@@ -420,15 +452,20 @@
                     configuredGroups += 1;
                 }
 
-                if (malayalamTvCount > 0) {
+                if (tamilMovieCount > 0) {
                     configuredGroups += 1;
                 }
 
-                configuredCount.textContent = configuredGroups + ' of 3 routed';
+                if (malayalamTvCount > 0 || malayalamTvTermsReady) {
+                    configuredGroups += 1;
+                }
+
+                configuredCount.textContent = configuredGroups + ' of 4 active';
                 previewList.innerHTML = [
-                    previewRow('English Movies', 'Publishes newly added and newly released English movie rails.', englishCount),
-                    previewRow('Malayalam Movies', 'Publishes newly added and newly released Malayalam movie rails.', malayalamMovieCount),
-                    previewRow('Malayalam TV Shows', 'Publishes newly added and newly released Malayalam TV rails.', malayalamTvCount)
+                    previewRow('Malayalam Movies', 'Newly added and newly released Malayalam movie rails.', malayalamMovieCount),
+                    previewRow('Malayalam TV Shows', 'Metadata-aware rows that can search mixed TV libraries.', malayalamTvCount, malayalamTvTermsReady),
+                    previewRow('English Movies', 'Newly added and newly released English movie rails.', englishCount),
+                    previewRow('Tamil Movies', 'Newly added and newly released Tamil movie rails.', tamilMovieCount)
                 ].join('');
             }
 
@@ -436,9 +473,12 @@
                 Dashboard.showLoadingMsg();
                 ApiClient.getPluginConfiguration(pluginUniqueId).then(function (config) {
                     configCache = config;
+                    fields.rowLimit.value = config.RowLimit || 24;
                     fields.englishMovieLibraryIds.value = config.EnglishMovieLibraryIds || '';
                     fields.malayalamMovieLibraryIds.value = config.MalayalamMovieLibraryIds || '';
+                    fields.tamilMovieLibraryIds.value = config.TamilMovieLibraryIds || '';
                     fields.malayalamTvLibraryIds.value = config.MalayalamTvLibraryIds || '';
+                    fields.malayalamTvMatchTerms.value = config.MalayalamTvMatchTerms || 'malayalam, മലയാളം';
                     renderPreview();
                     Dashboard.hideLoadingMsg();
                 });
@@ -447,9 +487,12 @@
             form.addEventListener('submit', function (event) {
                 event.preventDefault();
                 Dashboard.showLoadingMsg();
+                configCache.RowLimit = Math.max(1, Math.min(50, parseInt(fields.rowLimit.value || '24', 10)));
                 configCache.EnglishMovieLibraryIds = normalizeIds(fields.englishMovieLibraryIds.value);
                 configCache.MalayalamMovieLibraryIds = normalizeIds(fields.malayalamMovieLibraryIds.value);
+                configCache.TamilMovieLibraryIds = normalizeIds(fields.tamilMovieLibraryIds.value);
                 configCache.MalayalamTvLibraryIds = normalizeIds(fields.malayalamTvLibraryIds.value);
+                configCache.MalayalamTvMatchTerms = normalizeTerms(fields.malayalamTvMatchTerms.value) || 'malayalam, മലയാളം';
 
                 ApiClient.updatePluginConfiguration(pluginUniqueId, configCache).then(function (result) {
                     Dashboard.processPluginConfigurationUpdateResult(result);

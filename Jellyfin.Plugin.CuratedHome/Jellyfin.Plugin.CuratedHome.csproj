@@ -4,6 +4,16 @@
     <TargetFramework>net9.0</TargetFramework>
     <RootNamespace>Jellyfin.Plugin.CuratedHome</RootNamespace>
     <AssemblyName>Jellyfin.Plugin.CuratedHome</AssemblyName>
+    <AssemblyTitle>Velvet Rows</AssemblyTitle>
+    <Product>Velvet Rows</Product>
+    <Description>Curated Jellyfin home rows for language-aware newly added and newly released media.</Description>
+    <Company>Sharvinzlife</Company>
+    <Authors>Sharvin</Authors>
+    <Version>1.1.0.0</Version>
+    <FileVersion>1.1.0.0</FileVersion>
+    <RepositoryUrl>https://github.com/sharvinzlife/jellyfin-plugin-velvet-rows</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/sharvinzlife/jellyfin-plugin-velvet-rows</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -27,6 +37,7 @@
   <ItemGroup>
     <None Remove="Configuration\configPage.html" />
     <EmbeddedResource Include="Configuration\configPage.html" />
+    <None Include="..\assets\velvet-rows-logo.png" Link="logo.png" CopyToOutputDirectory="Always" />
   </ItemGroup>
 
 </Project>

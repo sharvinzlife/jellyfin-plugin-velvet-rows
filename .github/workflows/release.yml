@@ -1,0 +1,112 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Resolve release version
+        id: version
+        run: |
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            VERSION="${GITHUB_REF_NAME#v}"
+          else
+            VERSION=$(grep -oPm1 '(?<=<Version>)[^<]+' Jellyfin.Plugin.CuratedHome/Jellyfin.Plugin.CuratedHome.csproj)
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "zip_name=velvet-rows_${VERSION}.zip" >> "$GITHUB_OUTPUT"
+          echo "timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> "$GITHUB_OUTPUT"
+
+      - name: Build release package
+        id: package
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          ZIP_NAME: ${{ steps.version.outputs.zip_name }}
+        run: |
+          dotnet publish Jellyfin.Plugin.CuratedHome/Jellyfin.Plugin.CuratedHome.csproj -c Release -o dist/publish
+          cp assets/velvet-rows-logo.png dist/publish/logo.png
+          cd dist/publish
+          zip -r ../"$ZIP_NAME" .
+          cd ..
+          echo "checksum=$(md5sum "$ZIP_NAME" | awk '{print $1}')" >> "$GITHUB_OUTPUT"
+          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || true)
+          if [ -n "$PREV_TAG" ]; then
+            git log --pretty='- %s' "$PREV_TAG..HEAD" > changelog.txt
+          else
+            git log --pretty='- %s' -n 20 > changelog.txt
+          fi
+
+      - name: Update manifest
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          CHECKSUM: ${{ steps.package.outputs.checksum }}
+          ZIP_NAME: ${{ steps.version.outputs.zip_name }}
+          TIMESTAMP: ${{ steps.version.outputs.timestamp }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          manifest_path = Path('manifest.json')
+          data = json.loads(manifest_path.read_text())
+          plugin = data[0]
+          version = os.environ['VERSION']
+          checksum = os.environ['CHECKSUM']
+          zip_name = os.environ['ZIP_NAME']
+          changelog_path = Path('dist/changelog.txt')
+          changelog = changelog_path.read_text().strip() if changelog_path.exists() else ''
+
+          new_entry = {
+              'version': version,
+              'changelog': changelog,
+              'targetAbi': '10.11.6.0',
+              'sourceUrl': f'https://github.com/sharvinzlife/jellyfin-plugin-velvet-rows/releases/download/v{version}/{zip_name}',
+              'checksum': checksum,
+              'timestamp': os.environ['TIMESTAMP']
+          }
+
+          existing = [item for item in plugin.get('versions', []) if item.get('version') != version]
+          plugin['versions'] = [new_entry] + existing
+          manifest_path.write_text(json.dumps(data, indent=2) + '\n')
+          PY
+
+      - name: Commit manifest
+        run: |
+          if git diff --quiet manifest.json; then
+            exit 0
+          fi
+          git fetch origin main
+          git switch main
+          git config user.name github-actions
+          git config user.email github-actions@users.noreply.github.com
+          git add manifest.json
+          git commit -m "Update manifest for v${{ steps.version.outputs.version }}"
+          git push origin main
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          name: Velvet Rows v${{ steps.version.outputs.version }}
+          body_path: dist/changelog.txt
+          files: dist/${{ steps.version.outputs.zip_name }}
