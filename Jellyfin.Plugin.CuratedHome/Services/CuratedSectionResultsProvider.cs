@@ -49,10 +49,12 @@ public sealed class CuratedSectionResultsProvider
         {
             "malayalam_movies_recent" => GetRecentlyAddedMovies(payload.UserId, config.MalayalamMovieLibraryIds, limit),
             "malayalam_movies_latest" => GetLatestMovies(payload.UserId, config.MalayalamMovieLibraryIds, limit),
-            "malayalam_shows_recent" => GetRecentlyAddedShows(payload.UserId, config.MalayalamTvLibraryIds, config.MalayalamTvMatchTerms, limit),
-            "malayalam_shows_latest" => GetLatestShows(payload.UserId, config.MalayalamTvLibraryIds, config.MalayalamTvMatchTerms, limit),
+            "malayalam_shows_recent" => GetRecentlyAddedShows(payload.UserId, config.MalayalamTvLibraryIds, config.MalayalamTvMatchTerms, limit, true),
+            "malayalam_shows_latest" => GetLatestShows(payload.UserId, config.MalayalamTvLibraryIds, config.MalayalamTvMatchTerms, limit, true),
             "english_movies_recent" => GetRecentlyAddedMovies(payload.UserId, config.EnglishMovieLibraryIds, limit),
             "english_movies_latest" => GetLatestMovies(payload.UserId, config.EnglishMovieLibraryIds, limit),
+            "english_shows_recent" => GetRecentlyAddedShows(payload.UserId, config.EnglishTvLibraryIds, string.Empty, limit, false),
+            "english_shows_latest" => GetLatestShows(payload.UserId, config.EnglishTvLibraryIds, string.Empty, limit, false),
             "tamil_movies_recent" => GetRecentlyAddedMovies(payload.UserId, config.TamilMovieLibraryIds, limit),
             "tamil_movies_latest" => GetLatestMovies(payload.UserId, config.TamilMovieLibraryIds, limit),
             _ => Array.Empty<BaseItem>(),
@@ -127,13 +129,12 @@ public sealed class CuratedSectionResultsProvider
                 ParentId = folder.Id,
                 IsMissing = false,
             }).Items)
-            .Where(x => x.PremiereDate.HasValue)
             .DistinctBy(x => x.Id)
-            .OrderByDescending(x => x.PremiereDate)
+            .OrderByDescending(GetReleaseSortDate)
             .Take(limit);
     }
 
-    private IEnumerable<BaseItem> GetRecentlyAddedShows(Guid userId, string configuredLibraryIds, string configuredMatchTerms, int limit)
+    private IEnumerable<BaseItem> GetRecentlyAddedShows(Guid userId, string configuredLibraryIds, string configuredMatchTerms, int limit, bool useDefaultMalayalamTerms)
     {
         var user = _userManager.GetUserById(userId);
         if (user is null)
@@ -162,7 +163,7 @@ public sealed class CuratedSectionResultsProvider
                 Series = g.First().Series!,
                 SortDate = g.Max(x => x.DateCreated),
             })
-            .Where(x => MatchesConfiguredTerms(x.Series, configuredMatchTerms))
+            .Where(x => MatchesConfiguredTerms(x.Series, configuredMatchTerms, useDefaultMalayalamTerms))
             .OrderByDescending(x => x.SortDate)
             .Take(limit)
             .ToArray();
@@ -170,7 +171,7 @@ public sealed class CuratedSectionResultsProvider
         return ResolveSeriesInOrder(userId, seriesOrder.Select(x => x.Series.Id).ToArray());
     }
 
-    private IEnumerable<BaseItem> GetLatestShows(Guid userId, string configuredLibraryIds, string configuredMatchTerms, int limit)
+    private IEnumerable<BaseItem> GetLatestShows(Guid userId, string configuredLibraryIds, string configuredMatchTerms, int limit, bool useDefaultMalayalamTerms)
     {
         var user = _userManager.GetUserById(userId);
         if (user is null)
@@ -189,35 +190,41 @@ public sealed class CuratedSectionResultsProvider
                 IsMissing = false,
             }).Items)
             .OfType<Series>()
-            .Where(x => x.PremiereDate.HasValue)
-            .Where(x => MatchesConfiguredTerms(x, configuredMatchTerms))
+            .Where(x => MatchesConfiguredTerms(x, configuredMatchTerms, useDefaultMalayalamTerms))
             .DistinctBy(x => x.Id)
-            .OrderByDescending(x => x.PremiereDate)
+            .OrderByDescending(GetReleaseSortDate)
             .Take(limit);
     }
 
-    private bool MatchesConfiguredTerms(BaseItem item, string configuredMatchTerms)
+    private bool MatchesConfiguredTerms(BaseItem item, string configuredMatchTerms, bool useDefaultMalayalamTerms)
     {
         var searchTerms = configuredMatchTerms
             .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
             .Where(x => !string.IsNullOrWhiteSpace(x))
-            .DefaultIfEmpty(string.Empty)
             .ToArray();
 
-        if (searchTerms.Length == 1 && string.IsNullOrWhiteSpace(searchTerms[0]))
+        if (searchTerms.Length == 0)
         {
-            searchTerms = DefaultMalayalamTerms;
+            searchTerms = useDefaultMalayalamTerms ? DefaultMalayalamTerms : Array.Empty<string>();
+        }
+
+        if (searchTerms.Length == 0)
+        {
+            return true;
         }
 
         var searchableParts = new List<string>
         {
             item.Name ?? string.Empty,
+            item.OriginalTitle ?? string.Empty,
             item.Path ?? string.Empty,
             item.Overview ?? string.Empty,
+            item.Tagline ?? string.Empty,
         };
 
         searchableParts.AddRange(item.Genres ?? []);
         searchableParts.AddRange(item.Tags ?? []);
+        searchableParts.AddRange(item.Studios ?? []);
 
         var searchable = string.Join('\n', searchableParts.Where(x => !string.IsNullOrWhiteSpace(x)));
         return searchTerms.Any(term => searchable.Contains(term, StringComparison.OrdinalIgnoreCase));
@@ -279,5 +286,20 @@ public sealed class CuratedSectionResultsProvider
             .Select(id => items.FirstOrDefault(x => x.Id == id))
             .Where(x => x is not null)
             .Cast<BaseItem>();
+    }
+
+    private DateTime GetReleaseSortDate(BaseItem item)
+    {
+        if (item.PremiereDate.HasValue)
+        {
+            return item.PremiereDate.Value;
+        }
+
+        if (item.ProductionYear.HasValue && item.ProductionYear.Value > 0)
+        {
+            return new DateTime(item.ProductionYear.Value, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        }
+
+        return item.DateCreated;
     }
 }

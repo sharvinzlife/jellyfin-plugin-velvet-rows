@@ -8,6 +8,8 @@ public class PluginConfiguration : BasePluginConfiguration
 
     public string EnglishMovieLibraryIds { get; set; } = string.Empty;
 
+    public string EnglishTvLibraryIds { get; set; } = string.Empty;
+
     public string MalayalamMovieLibraryIds { get; set; } = string.Empty;
 
     public string TamilMovieLibraryIds { get; set; } = string.Empty;

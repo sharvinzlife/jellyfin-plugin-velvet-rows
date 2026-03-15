@@ -16,11 +16,11 @@
                     <div class="heroCopy">
                         <span class="eyebrow">Curated home screen plugin</span>
                         <h1>Velvet Rows</h1>
-                        <p>Design elegant discovery rails for Malayalam, English, and Tamil media with library routing, metadata-aware TV matching, and release-ready homepage curation.</p>
+                        <p>Design elegant discovery rails for Malayalam, English, and Tamil media with smarter release sorting, mixed-library Malayalam TV matching, and polished homepage curation.</p>
                         <div class="statusChips">
                             <span class="chip live">Home Screen Sections</span>
                             <span class="chip live">Plugin Pages</span>
-                            <span class="chip subtle">Mixed-library Malayalam TV support</span>
+                            <span class="chip subtle">English TV shelves</span>
                         </div>
                     </div>
                 </div>
@@ -30,7 +30,7 @@
                         <div class="panelHeader">
                             <div>
                                 <h2>Routing and limits</h2>
-                                <p>Comma-separated library IDs. Malayalam TV can point at a dedicated TV library or a mixed TV library.</p>
+                                <p>Comma-separated library IDs. Malayalam TV can use a dedicated library or a shared TV library with match terms.</p>
                             </div>
                             <span class="pill">Manage</span>
                         </div>
@@ -43,6 +43,10 @@
                         <textarea id="englishMovieLibraryIds" class="emby-input rowsInput" rows="2" spellcheck="false" placeholder="f137a2dd21bbc1b99aa5c0f6bf02a805"></textarea>
                         <div class="fieldHelp">Publishes English Movies - Newly Added and English Movies - Newly Released.</div>
 
+                        <label class="fieldLabel" for="englishTvLibraryIds">English TV library IDs</label>
+                        <textarea id="englishTvLibraryIds" class="emby-input rowsInput" rows="2" spellcheck="false" placeholder="767bffe4f11c93ef34b805451a696a4e"></textarea>
+                        <div class="fieldHelp">Publishes English TV Shows - Newly Added and English TV Shows - Newly Released.</div>
+
                         <label class="fieldLabel" for="malayalamMovieLibraryIds">Malayalam movie library IDs</label>
                         <textarea id="malayalamMovieLibraryIds" class="emby-input rowsInput" rows="2" spellcheck="false" placeholder="a104632f6a4906d2b9e6bd5e251d5b2d"></textarea>
                         <div class="fieldHelp">Publishes Malayalam Movies - Newly Added and Malayalam Movies - Newly Released.</div>
@@ -52,19 +56,19 @@
                         <div class="fieldHelp">Publishes Tamil Movies - Newly Added and Tamil Movies - Newly Released.</div>
 
                         <label class="fieldLabel" for="malayalamTvLibraryIds">Malayalam TV source library IDs</label>
-                        <textarea id="malayalamTvLibraryIds" class="emby-input rowsInput" rows="2" spellcheck="false" placeholder="Leave blank to search all TV libraries"></textarea>
-                        <div class="fieldHelp">Use dedicated Malayalam TV libraries if you have them. Mixed TV libraries work too.</div>
+                        <textarea id="malayalamTvLibraryIds" class="emby-input rowsInput" rows="2" spellcheck="false" placeholder="f0cc8253-b4d1-07a2-da9a-6864e97a2251"></textarea>
+                        <div class="fieldHelp">Use your Malayalam TV library ID if you have one. Shared TV libraries work too.</div>
 
                         <label class="fieldLabel" for="malayalamTvMatchTerms">Malayalam TV match terms</label>
                         <textarea id="malayalamTvMatchTerms" class="emby-input rowsInput" rows="2" spellcheck="false" placeholder="malayalam, മലയാളം"></textarea>
-                        <div class="fieldHelp">Velvet Rows matches these terms against TV metadata like title, overview, tags, genres, and path.</div>
+                        <div class="fieldHelp">Used only when the TV source includes mixed languages.</div>
                     </section>
 
                     <section class="panel insightPanel">
                         <div class="panelHeader">
                             <div>
                                 <h2>Curated row preview</h2>
-                                <p>A live summary of the shelves Velvet Rows is prepared to publish.</p>
+                                <p>A live summary of the shelves Velvet Rows is ready to publish.</p>
                             </div>
                             <span class="pill accent" id="configuredCount">0 configured</span>
                         </div>
@@ -87,11 +91,11 @@
                             </article>
                             <article class="logicCard">
                                 <h3>Newly Released</h3>
-                                <p>Movies sort by premiere date, while Malayalam TV sorts by series premiere date for a cleaner discovery rail.</p>
+                                <p>Prefers premiere dates, but falls back to production year and creation time when metadata is sparse so the row never disappears.</p>
                             </article>
                             <article class="logicCard">
                                 <h3>Metadata-aware TV</h3>
-                                <p>Malayalam TV rows can filter a mixed TV library using match terms instead of demanding a dedicated Malayalam TV library.</p>
+                                <p>Malayalam TV rows can search a shared TV library using match terms, while English TV shelves can point straight at your main TV library.</p>
                             </article>
                         </div>
                     </section>
@@ -104,8 +108,8 @@
                             </div>
                         </div>
                         <ul class="checkList">
-                            <li>Install or keep Home Screen Sections and Plugin Pages enabled.</li>
-                            <li>If Malayalam TV uses a shared TV library, keep the default match terms or add your own.</li>
+                            <li>Keep Home Screen Sections and Plugin Pages enabled.</li>
+                            <li>Use the dedicated Malayalam TV library when available for the cleanest results.</li>
                             <li>After saving, refresh the dashboard and reorder sections in Home Screen Sections if you want a different shelf order.</li>
                         </ul>
                     </section>
@@ -120,13 +124,11 @@
 
     <style>
         .velvetRowsPage {
-            --vr-bg: #09131f;
             --vr-panel: linear-gradient(180deg, rgba(17, 30, 48, 0.96) 0%, rgba(10, 18, 31, 0.96) 100%);
             --vr-panel-border: rgba(108, 148, 174, 0.18);
             --vr-copy: #edf4fb;
             --vr-muted: #96a9bb;
             --vr-accent: #efb666;
-            --vr-accent-2: #5ed0c2;
             --vr-shadow: 0 28px 60px rgba(0, 0, 0, 0.34);
             background:
                 radial-gradient(circle at top left, rgba(94, 208, 194, 0.14), transparent 32%),
@@ -135,241 +137,43 @@
             min-height: 100%;
             color: var(--vr-copy);
         }
-
-        .velvetRowsPage .content-primary {
-            max-width: 1180px;
-            margin: 0 auto;
-            padding: 32px 24px 48px;
-        }
-
-        .velvetRowsPage .heroPanel,
-        .velvetRowsPage .panel,
-        .velvetRowsPage .saveBar {
-            background: var(--vr-panel);
-            border: 1px solid var(--vr-panel-border);
-            border-radius: 28px;
-            box-shadow: var(--vr-shadow);
-            backdrop-filter: blur(14px);
-        }
-
-        .velvetRowsPage .heroPanel {
-            display: grid;
-            grid-template-columns: 120px minmax(0, 1fr);
-            gap: 24px;
-            padding: 28px;
-            margin-bottom: 24px;
-            align-items: center;
-        }
-
-        .velvetRowsPage .heroMark {
-            width: 120px;
-            height: 120px;
-            display: grid;
-            place-items: center;
-        }
-
-        .velvetRowsPage .heroLogo {
-            width: 120px;
-            height: 120px;
-            border-radius: 28px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.28);
-        }
-
-        .velvetRowsPage .heroCopy h1 {
-            margin: 6px 0 10px;
-            font-size: clamp(2rem, 3vw, 3.2rem);
-            line-height: 1;
-            letter-spacing: -0.04em;
-        }
-
-        .velvetRowsPage .heroCopy p,
-        .velvetRowsPage .panelHeader p,
-        .velvetRowsPage .fieldHelp,
-        .velvetRowsPage .logicCard p,
-        .velvetRowsPage .checkList {
-            color: var(--vr-muted);
-        }
-
-        .velvetRowsPage .eyebrow {
-            display: inline-flex;
-            text-transform: uppercase;
-            letter-spacing: 0.22em;
-            font-size: 0.72rem;
-            color: var(--vr-accent);
-        }
-
-        .velvetRowsPage .statusChips,
-        .velvetRowsPage .previewTags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .velvetRowsPage .chip,
-        .velvetRowsPage .pill,
-        .velvetRowsPage .previewTag {
-            display: inline-flex;
-            align-items: center;
-            border-radius: 999px;
-            padding: 7px 12px;
-            font-size: 0.85rem;
-            line-height: 1;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .velvetRowsPage .chip.live {
-            background: rgba(94, 208, 194, 0.12);
-            color: #b8fff4;
-        }
-
-        .velvetRowsPage .chip.subtle,
-        .velvetRowsPage .pill {
-            background: rgba(255, 255, 255, 0.04);
-            color: var(--vr-muted);
-        }
-
-        .velvetRowsPage .pill.accent {
-            color: #1a2630;
-            background: linear-gradient(135deg, var(--vr-accent) 0%, #ffd7a1 100%);
-            border-color: transparent;
-            font-weight: 700;
-        }
-
-        .velvetRowsPage .dashboardGrid {
-            display: grid;
-            grid-template-columns: 1.15fr 0.85fr;
-            gap: 24px;
-            margin-bottom: 24px;
-        }
-
-        .velvetRowsPage .secondaryGrid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-
-        .velvetRowsPage .panel {
-            padding: 24px;
-        }
-
-        .velvetRowsPage .panelHeader {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-
-        .velvetRowsPage .panelHeader h2 {
-            margin: 0 0 6px;
-            font-size: 1.25rem;
-        }
-
-        .velvetRowsPage .fieldLabel {
-            display: block;
-            font-weight: 700;
-            margin: 18px 0 8px;
-        }
-
-        .velvetRowsPage .rowsInput,
-        .velvetRowsPage .limitInput {
-            width: 100%;
-            box-sizing: border-box;
-            border-radius: 18px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            background: rgba(7, 13, 22, 0.75);
-            color: var(--vr-copy);
-            padding: 14px 16px;
-        }
-
-        .velvetRowsPage .rowsInput {
-            min-height: 74px;
-            font-family: "SFMono-Regular", Consolas, monospace;
-            resize: vertical;
-        }
-
-        .velvetRowsPage .limitInput {
-            max-width: 160px;
-            min-height: 52px;
-        }
-
-        .velvetRowsPage .previewList {
-            display: grid;
-            gap: 14px;
-        }
-
-        .velvetRowsPage .previewCard {
-            border-radius: 22px;
-            padding: 18px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            background: linear-gradient(180deg, rgba(13, 24, 39, 0.92) 0%, rgba(8, 15, 26, 0.92) 100%);
-        }
-
-        .velvetRowsPage .previewCard h3 {
-            margin: 0 0 8px;
-            font-size: 1rem;
-        }
-
-        .velvetRowsPage .previewCard p {
-            margin: 0 0 12px;
-            color: var(--vr-muted);
-        }
-
-        .velvetRowsPage .previewTag.ready {
-            background: rgba(94, 208, 194, 0.12);
-            color: #b8fff4;
-        }
-
-        .velvetRowsPage .previewTag.waiting {
-            background: rgba(239, 182, 102, 0.12);
-            color: #ffdcb0;
-        }
-
-        .velvetRowsPage .logicGrid {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 14px;
-        }
-
-        .velvetRowsPage .logicCard {
-            border-radius: 20px;
-            padding: 16px;
-            background: rgba(7, 13, 22, 0.72);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-        }
-
-        .velvetRowsPage .logicCard h3 {
-            margin: 0 0 8px;
-            font-size: 1rem;
-        }
-
-        .velvetRowsPage .checkList {
-            margin: 0;
-            padding-left: 20px;
-            line-height: 1.7;
-        }
-
-        .velvetRowsPage .saveBar {
-            padding: 14px;
-        }
-
-        .velvetRowsPage .saveButton {
-            border-radius: 18px;
-            background: linear-gradient(135deg, var(--vr-accent) 0%, #ffd7a1 100%);
-            color: #14202c;
-            font-weight: 800;
-            min-height: 52px;
-        }
-
+        .velvetRowsPage .content-primary { max-width: 1180px; margin: 0 auto; padding: 32px 24px 48px; }
+        .velvetRowsPage .heroPanel, .velvetRowsPage .panel, .velvetRowsPage .saveBar { background: var(--vr-panel); border: 1px solid var(--vr-panel-border); border-radius: 28px; box-shadow: var(--vr-shadow); backdrop-filter: blur(14px); }
+        .velvetRowsPage .heroPanel { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 24px; padding: 28px; margin-bottom: 24px; align-items: center; }
+        .velvetRowsPage .heroMark { width: 120px; height: 120px; display: grid; place-items: center; }
+        .velvetRowsPage .heroLogo { width: 120px; height: 120px; border-radius: 28px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.28); }
+        .velvetRowsPage .heroCopy h1 { margin: 6px 0 10px; font-size: clamp(2rem, 3vw, 3.2rem); line-height: 1; letter-spacing: -0.04em; }
+        .velvetRowsPage .heroCopy p, .velvetRowsPage .panelHeader p, .velvetRowsPage .fieldHelp, .velvetRowsPage .logicCard p, .velvetRowsPage .checkList { color: var(--vr-muted); }
+        .velvetRowsPage .eyebrow { display: inline-flex; text-transform: uppercase; letter-spacing: 0.22em; font-size: 0.72rem; color: var(--vr-accent); }
+        .velvetRowsPage .statusChips, .velvetRowsPage .previewTags { display: flex; flex-wrap: wrap; gap: 10px; }
+        .velvetRowsPage .chip, .velvetRowsPage .pill, .velvetRowsPage .previewTag { display: inline-flex; align-items: center; border-radius: 999px; padding: 7px 12px; font-size: 0.85rem; line-height: 1; border: 1px solid rgba(255, 255, 255, 0.08); }
+        .velvetRowsPage .chip.live { background: rgba(94, 208, 194, 0.12); color: #b8fff4; }
+        .velvetRowsPage .chip.subtle, .velvetRowsPage .pill { background: rgba(255, 255, 255, 0.04); color: var(--vr-muted); }
+        .velvetRowsPage .pill.accent { color: #1a2630; background: linear-gradient(135deg, var(--vr-accent) 0%, #ffd7a1 100%); border-color: transparent; font-weight: 700; }
+        .velvetRowsPage .dashboardGrid { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 24px; margin-bottom: 24px; }
+        .velvetRowsPage .secondaryGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .velvetRowsPage .panel { padding: 24px; }
+        .velvetRowsPage .panelHeader { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 20px; }
+        .velvetRowsPage .panelHeader h2 { margin: 0 0 6px; font-size: 1.25rem; }
+        .velvetRowsPage .fieldLabel { display: block; font-weight: 700; margin: 18px 0 8px; }
+        .velvetRowsPage .rowsInput, .velvetRowsPage .limitInput { width: 100%; box-sizing: border-box; border-radius: 18px; border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(7, 13, 22, 0.75); color: var(--vr-copy); padding: 14px 16px; }
+        .velvetRowsPage .rowsInput { min-height: 74px; font-family: "SFMono-Regular", Consolas, monospace; resize: vertical; }
+        .velvetRowsPage .limitInput { max-width: 160px; min-height: 52px; }
+        .velvetRowsPage .previewList { display: grid; gap: 14px; }
+        .velvetRowsPage .previewCard { border-radius: 22px; padding: 18px; border: 1px solid rgba(255, 255, 255, 0.08); background: linear-gradient(180deg, rgba(13, 24, 39, 0.92) 0%, rgba(8, 15, 26, 0.92) 100%); }
+        .velvetRowsPage .previewCard h3 { margin: 0 0 8px; font-size: 1rem; }
+        .velvetRowsPage .previewCard p { margin: 0 0 12px; color: var(--vr-muted); }
+        .velvetRowsPage .previewTag.ready { background: rgba(94, 208, 194, 0.12); color: #b8fff4; }
+        .velvetRowsPage .previewTag.waiting { background: rgba(239, 182, 102, 0.12); color: #ffdcb0; }
+        .velvetRowsPage .logicGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+        .velvetRowsPage .logicCard { border-radius: 20px; padding: 16px; background: rgba(7, 13, 22, 0.72); border: 1px solid rgba(255, 255, 255, 0.06); }
+        .velvetRowsPage .logicCard h3 { margin: 0 0 8px; font-size: 1rem; }
+        .velvetRowsPage .checkList { margin: 0; padding-left: 20px; line-height: 1.7; }
+        .velvetRowsPage .saveBar { padding: 14px; }
+        .velvetRowsPage .saveButton { border-radius: 18px; background: linear-gradient(135deg, var(--vr-accent) 0%, #ffd7a1 100%); color: #14202c; font-weight: 800; min-height: 52px; }
         @media (max-width: 980px) {
-            .velvetRowsPage .dashboardGrid,
-            .velvetRowsPage .secondaryGrid,
-            .velvetRowsPage .logicGrid,
-            .velvetRowsPage .heroPanel {
-                grid-template-columns: 1fr;
-            }
-
-            .velvetRowsPage .heroPanel {
-                justify-items: start;
-            }
+            .velvetRowsPage .dashboardGrid, .velvetRowsPage .secondaryGrid, .velvetRowsPage .logicGrid, .velvetRowsPage .heroPanel { grid-template-columns: 1fr; }
+            .velvetRowsPage .heroPanel { justify-items: start; }
         }
     </style>
 
@@ -381,6 +185,7 @@
             var fields = {
                 rowLimit: page.querySelector('#rowLimit'),
                 englishMovieLibraryIds: page.querySelector('#englishMovieLibraryIds'),
+                englishTvLibraryIds: page.querySelector('#englishTvLibraryIds'),
                 malayalamMovieLibraryIds: page.querySelector('#malayalamMovieLibraryIds'),
                 tamilMovieLibraryIds: page.querySelector('#tamilMovieLibraryIds'),
                 malayalamTvLibraryIds: page.querySelector('#malayalamTvLibraryIds'),
@@ -391,90 +196,50 @@
             var configCache = null;
 
             function normalizeIds(value) {
-                return value
-                    .split(',')
-                    .map(function (item) { return item.trim(); })
-                    .filter(Boolean)
-                    .join(', ');
+                return value.split(',').map(function (item) { return item.trim(); }).filter(Boolean).join(', ');
             }
-
             function normalizeTerms(value) {
-                return value
-                    .split(',')
-                    .map(function (item) { return item.trim(); })
-                    .filter(Boolean)
-                    .join(', ');
+                return value.split(',').map(function (item) { return item.trim(); }).filter(Boolean).join(', ');
             }
-
             function countIds(value) {
-                if (!value) {
-                    return 0;
-                }
-
-                return value
-                    .split(',')
-                    .map(function (item) { return item.trim(); })
-                    .filter(Boolean)
-                    .length;
+                if (!value) { return 0; }
+                return value.split(',').map(function (item) { return item.trim(); }).filter(Boolean).length;
             }
-
             function previewRow(title, summary, count, stateOverride) {
                 var ready = stateOverride || count > 0;
                 var stateClass = ready ? 'ready' : 'waiting';
-                var stateLabel = ready
-                    ? (count > 0 ? count + ' library id' + (count > 1 ? 's' : '') : 'Metadata matched')
-                    : 'Needs routing';
-
-                return [
-                    '<article class="previewCard">',
-                    '<h3>' + title + '</h3>',
-                    '<p>' + summary + '</p>',
-                    '<div class="previewTags">',
-                    '<span class="previewTag ' + stateClass + '">' + stateLabel + '</span>',
-                    '</div>',
-                    '</article>'
-                ].join('');
+                var stateLabel = ready ? (count > 0 ? count + ' library id' + (count > 1 ? 's' : '') : 'Metadata matched') : 'Needs routing';
+                return ['<article class="previewCard">','<h3>' + title + '</h3>','<p>' + summary + '</p>','<div class="previewTags">','<span class="previewTag ' + stateClass + '">' + stateLabel + '</span>','</div>','</article>'].join('');
             }
-
             function renderPreview() {
-                var englishCount = countIds(fields.englishMovieLibraryIds.value);
+                var englishMovieCount = countIds(fields.englishMovieLibraryIds.value);
+                var englishTvCount = countIds(fields.englishTvLibraryIds.value);
                 var malayalamMovieCount = countIds(fields.malayalamMovieLibraryIds.value);
                 var tamilMovieCount = countIds(fields.tamilMovieLibraryIds.value);
                 var malayalamTvCount = countIds(fields.malayalamTvLibraryIds.value);
                 var malayalamTvTermsReady = normalizeTerms(fields.malayalamTvMatchTerms.value).length > 0;
                 var configuredGroups = 0;
-
-                if (englishCount > 0) {
-                    configuredGroups += 1;
-                }
-
-                if (malayalamMovieCount > 0) {
-                    configuredGroups += 1;
-                }
-
-                if (tamilMovieCount > 0) {
-                    configuredGroups += 1;
-                }
-
-                if (malayalamTvCount > 0 || malayalamTvTermsReady) {
-                    configuredGroups += 1;
-                }
-
-                configuredCount.textContent = configuredGroups + ' of 4 active';
+                if (englishMovieCount > 0) { configuredGroups += 1; }
+                if (englishTvCount > 0) { configuredGroups += 1; }
+                if (malayalamMovieCount > 0) { configuredGroups += 1; }
+                if (tamilMovieCount > 0) { configuredGroups += 1; }
+                if (malayalamTvCount > 0 || malayalamTvTermsReady) { configuredGroups += 1; }
+                configuredCount.textContent = configuredGroups + ' of 5 active';
                 previewList.innerHTML = [
                     previewRow('Malayalam Movies', 'Newly added and newly released Malayalam movie rails.', malayalamMovieCount),
-                    previewRow('Malayalam TV Shows', 'Metadata-aware rows that can search mixed TV libraries.', malayalamTvCount, malayalamTvTermsReady),
-                    previewRow('English Movies', 'Newly added and newly released English movie rails.', englishCount),
+                    previewRow('Malayalam TV Shows', 'Newly added and newly released Malayalam TV rails.', malayalamTvCount, malayalamTvTermsReady),
+                    previewRow('English Movies', 'Newly added and newly released English movie rails.', englishMovieCount),
+                    previewRow('English TV Shows', 'Newly added and newly released English TV rails.', englishTvCount),
                     previewRow('Tamil Movies', 'Newly added and newly released Tamil movie rails.', tamilMovieCount)
                 ].join('');
             }
-
             function loadConfig() {
                 Dashboard.showLoadingMsg();
                 ApiClient.getPluginConfiguration(pluginUniqueId).then(function (config) {
                     configCache = config;
                     fields.rowLimit.value = config.RowLimit || 24;
                     fields.englishMovieLibraryIds.value = config.EnglishMovieLibraryIds || '';
+                    fields.englishTvLibraryIds.value = config.EnglishTvLibraryIds || '';
                     fields.malayalamMovieLibraryIds.value = config.MalayalamMovieLibraryIds || '';
                     fields.tamilMovieLibraryIds.value = config.TamilMovieLibraryIds || '';
                     fields.malayalamTvLibraryIds.value = config.MalayalamTvLibraryIds || '';
@@ -483,27 +248,22 @@
                     Dashboard.hideLoadingMsg();
                 });
             }
-
             form.addEventListener('submit', function (event) {
                 event.preventDefault();
                 Dashboard.showLoadingMsg();
                 configCache.RowLimit = Math.max(1, Math.min(50, parseInt(fields.rowLimit.value || '24', 10)));
                 configCache.EnglishMovieLibraryIds = normalizeIds(fields.englishMovieLibraryIds.value);
+                configCache.EnglishTvLibraryIds = normalizeIds(fields.englishTvLibraryIds.value);
                 configCache.MalayalamMovieLibraryIds = normalizeIds(fields.malayalamMovieLibraryIds.value);
                 configCache.TamilMovieLibraryIds = normalizeIds(fields.tamilMovieLibraryIds.value);
                 configCache.MalayalamTvLibraryIds = normalizeIds(fields.malayalamTvLibraryIds.value);
                 configCache.MalayalamTvMatchTerms = normalizeTerms(fields.malayalamTvMatchTerms.value) || 'malayalam, മലയാളം';
-
                 ApiClient.updatePluginConfiguration(pluginUniqueId, configCache).then(function (result) {
                     Dashboard.processPluginConfigurationUpdateResult(result);
                     loadConfig();
                 });
             });
-
-            Object.keys(fields).forEach(function (key) {
-                fields[key].addEventListener('input', renderPreview);
-            });
-
+            Object.keys(fields).forEach(function (key) { fields[key].addEventListener('input', renderPreview); });
             page.addEventListener('pageshow', loadConfig);
         })();
     </script>
