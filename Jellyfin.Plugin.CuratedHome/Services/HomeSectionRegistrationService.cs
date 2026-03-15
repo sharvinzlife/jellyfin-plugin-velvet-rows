@@ -1,7 +1,9 @@
 using System.Reflection;
+using MediaBrowser.Common.Configuration;
 using Jellyfin.Plugin.CuratedHome.Sections;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Jellyfin.Plugin.CuratedHome.Services;
@@ -10,14 +12,17 @@ public sealed class HomeSectionRegistrationService : BackgroundService
 {
     private readonly ILogger<HomeSectionRegistrationService> _logger;
     private readonly CuratedSectionResultsProvider _resultsProvider;
+    private readonly IApplicationPaths _applicationPaths;
     private bool _registered;
 
     public HomeSectionRegistrationService(
         ILogger<HomeSectionRegistrationService> logger,
-        CuratedSectionResultsProvider resultsProvider)
+        CuratedSectionResultsProvider resultsProvider,
+        IApplicationPaths applicationPaths)
     {
         _logger = logger;
         _resultsProvider = resultsProvider;
+        _applicationPaths = applicationPaths;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -27,6 +32,7 @@ public sealed class HomeSectionRegistrationService : BackgroundService
             if (TryRegisterSections())
             {
                 _registered = true;
+                EnsureCuratedSectionsEnabledForExistingUsers();
                 _logger.LogInformation("Curated Home Sections registered into Home Screen Sections");
                 return;
             }
@@ -83,5 +89,61 @@ public sealed class HomeSectionRegistrationService : BackgroundService
         }
 
         return true;
+    }
+
+    private void EnsureCuratedSectionsEnabledForExistingUsers()
+    {
+        try
+        {
+            var settingsPath = Path.Combine(
+                _applicationPaths.PluginConfigurationsPath,
+                "Jellyfin.Plugin.HomeScreenSections",
+                "ModularHomeSettings.json");
+
+            if (!File.Exists(settingsPath))
+            {
+                return;
+            }
+
+            var settingsArray = JArray.Parse(File.ReadAllText(settingsPath));
+            var curatedSectionIds = SectionDefinitions.All
+                .Select(x => x.Id)
+                .ToArray();
+
+            var changed = false;
+
+            foreach (var entry in settingsArray.OfType<JObject>())
+            {
+                if (entry["EnabledSections"] is not JArray enabledSections)
+                {
+                    enabledSections = [];
+                    entry["EnabledSections"] = enabledSections;
+                    changed = true;
+                }
+
+                foreach (var sectionId in curatedSectionIds)
+                {
+                    if (enabledSections.Any(x => string.Equals((string?)x, sectionId, StringComparison.Ordinal)))
+                    {
+                        continue;
+                    }
+
+                    enabledSections.Add(sectionId);
+                    changed = true;
+                }
+            }
+
+            if (!changed)
+            {
+                return;
+            }
+
+            File.WriteAllText(settingsPath, settingsArray.ToString(Formatting.Indented));
+            _logger.LogInformation("Enabled Velvet Rows sections for existing Home Screen Sections users");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to synchronize Velvet Rows sections into Home Screen Sections user settings");
+        }
     }
 }

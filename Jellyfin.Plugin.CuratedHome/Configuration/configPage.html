@@ -11,7 +11,23 @@
             <form class="velvetRowsForm">
                 <div class="heroPanel">
                     <div class="heroMark" aria-hidden="true">
-                        <img src="logo.png" alt="Velvet Rows logo" class="heroLogo" />
+                        <svg class="heroLogo" viewBox="0 0 160 160" role="img" aria-label="Velvet Rows logo" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="vr-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#16253b" />
+                                    <stop offset="100%" stop-color="#0c1524" />
+                                </linearGradient>
+                                <linearGradient id="vr-v" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#f3c177" />
+                                    <stop offset="100%" stop-color="#6be0d1" />
+                                </linearGradient>
+                            </defs>
+                            <rect x="6" y="6" width="148" height="148" rx="34" fill="url(#vr-bg)" />
+                            <rect x="19" y="20" width="16" height="118" rx="8" fill="#22334d" opacity="0.85" />
+                            <rect x="125" y="20" width="16" height="118" rx="8" fill="#22334d" opacity="0.85" />
+                            <path d="M44 26h18l18 86 18-86h18l-27 108H71L44 26Z" fill="url(#vr-v)" />
+                            <rect x="34" y="126" width="92" height="14" rx="7" fill="#2d4d68" />
+                        </svg>
                     </div>
                     <div class="heroCopy">
                         <span class="eyebrow">Curated home screen plugin</span>
@@ -141,7 +157,7 @@
         .velvetRowsPage .heroPanel, .velvetRowsPage .panel, .velvetRowsPage .saveBar { background: var(--vr-panel); border: 1px solid var(--vr-panel-border); border-radius: 28px; box-shadow: var(--vr-shadow); backdrop-filter: blur(14px); }
         .velvetRowsPage .heroPanel { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 24px; padding: 28px; margin-bottom: 24px; align-items: center; }
         .velvetRowsPage .heroMark { width: 120px; height: 120px; display: grid; place-items: center; }
-        .velvetRowsPage .heroLogo { width: 120px; height: 120px; border-radius: 28px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.28); }
+        .velvetRowsPage .heroLogo { width: 120px; height: 120px; border-radius: 28px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.28); display: block; }
         .velvetRowsPage .heroCopy h1 { margin: 6px 0 10px; font-size: clamp(2rem, 3vw, 3.2rem); line-height: 1; letter-spacing: -0.04em; }
         .velvetRowsPage .heroCopy p, .velvetRowsPage .panelHeader p, .velvetRowsPage .fieldHelp, .velvetRowsPage .logicCard p, .velvetRowsPage .checkList { color: var(--vr-muted); }
         .velvetRowsPage .eyebrow { display: inline-flex; text-transform: uppercase; letter-spacing: 0.22em; font-size: 0.72rem; color: var(--vr-accent); }
