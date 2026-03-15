@@ -10,11 +10,11 @@
     "versions": [
       {
         "version": "1.1.0.0",
-        "changelog": "- Add metadata-aware Malayalam TV filtering for mixed TV libraries\n- Add Tamil movie shelves and improved plugin settings UI\n- Add plugin repository manifest, branding metadata, and release automation",
+        "changelog": "- Add release metadata and mixed-library curation\n- Initial commit",
         "targetAbi": "10.11.6.0",
         "sourceUrl": "https://github.com/sharvinzlife/jellyfin-plugin-velvet-rows/releases/download/v1.1.0.0/velvet-rows_1.1.0.0.zip",
-        "checksum": "52fc8404b80f5b783b30f6de2b45c11a",
-        "timestamp": "2026-03-15T22:00:00Z"
+        "checksum": "f70cd5285a6d146e9fc8580749b19824",
+        "timestamp": "2026-03-15T22:19:28Z"
       }
     ]
   }
