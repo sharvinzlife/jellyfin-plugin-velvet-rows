@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Velvet Rows</title>
+</head>
+<body>
+<div data-role="page" class="page type-interior pluginConfigurationPage velvetRowsPage">
+    <div data-role="content">
+        <div class="content-primary">
+            <form class="velvetRowsForm">
+                <div class="heroPanel">
+                    <div class="heroMark" aria-hidden="true">
+                        <svg viewBox="0 0 160 160" role="img">
+                            <defs>
+                                <linearGradient id="heroBg" x1="0" y1="0" x2="1" y2="1">
+                                    <stop offset="0%" stop-color="#0d1b2a"></stop>
+                                    <stop offset="100%" stop-color="#132238"></stop>
+                                </linearGradient>
+                                <linearGradient id="heroGlow" x1="0" y1="0" x2="1" y2="1">
+                                    <stop offset="0%" stop-color="#efb666"></stop>
+                                    <stop offset="100%" stop-color="#5ed0c2"></stop>
+                                </linearGradient>
+                            </defs>
+                            <rect x="10" y="10" width="140" height="140" rx="36" fill="url(#heroBg)"></rect>
+                            <path d="M45 42H68L80 105L92 42H115L88 118H72Z" fill="url(#heroGlow)"></path>
+                            <rect x="38" y="121" width="84" height="8" rx="4" fill="#23435a"></rect>
+                            <rect x="52" y="132" width="56" height="8" rx="4" fill="#315f78"></rect>
+                        </svg>
+                    </div>
+                    <div class="heroCopy">
+                        <span class="eyebrow">Curated home screen plugin</span>
+                        <h1>Velvet Rows</h1>
+                        <p>Shape elegant homepage rails for English movies, Malayalam cinema, and Malayalam TV without hand-editing config files.</p>
+                        <div class="statusChips">
+                            <span class="chip live">Home Screen Sections</span>
+                            <span class="chip live">Plugin Pages</span>
+                            <span class="chip subtle">Jellyfin 10.11.x</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboardGrid">
+                    <section class="panel cardStack">
+                        <div class="panelHeader">
+                            <div>
+                                <h2>Library routing</h2>
+                                <p>Use comma-separated library IDs. Leave Malayalam TV blank until you have a dedicated library.</p>
+                            </div>
+                            <span class="pill">Manage</span>
+                        </div>
+                        <label class="fieldLabel" for="englishMovieLibraryIds">English movie library IDs</label>
+                        <textarea id="englishMovieLibraryIds" class="emby-input rowsInput" rows="3" spellcheck="false" placeholder="f137a2dd21bbc1b99aa5c0f6bf02a805"></textarea>
+                        <div class="fieldHelp">Powers: English Movies - Newly Added and English Movies - Newly Released</div>
+
+                        <label class="fieldLabel" for="malayalamMovieLibraryIds">Malayalam movie library IDs</label>
+                        <textarea id="malayalamMovieLibraryIds" class="emby-input rowsInput" rows="3" spellcheck="false" placeholder="a104632f6a4906d2b9e6bd5e251d5b2d"></textarea>
+                        <div class="fieldHelp">Powers: Malayalam Movies - Newly Added and Malayalam Movies - Newly Released</div>
+
+                        <label class="fieldLabel" for="malayalamTvLibraryIds">Malayalam TV library IDs</label>
+                        <textarea id="malayalamTvLibraryIds" class="emby-input rowsInput" rows="3" spellcheck="false" placeholder="Add a dedicated Malayalam TV library ID when ready"></textarea>
+                        <div class="fieldHelp">Powers: Malayalam TV Shows - Newly Added and Malayalam TV Shows - Newly Released</div>
+                    </section>
+
+                    <section class="panel insightPanel">
+                        <div class="panelHeader">
+                            <div>
+                                <h2>Row preview</h2>
+                                <p>A quick look at what Velvet Rows will publish to the homepage.</p>
+                            </div>
+                            <span class="pill accent" id="configuredCount">0 configured</span>
+                        </div>
+                        <div class="previewList" id="previewList"></div>
+                    </section>
+                </div>
+
+                <div class="dashboardGrid secondaryGrid">
+                    <section class="panel notesPanel">
+                        <div class="panelHeader">
+                            <div>
+                                <h2>Release logic</h2>
+                                <p>How each row decides what belongs on the shelf.</p>
+                            </div>
+                        </div>
+                        <div class="logicGrid">
+                            <article class="logicCard">
+                                <h3>Newly Added</h3>
+                                <p>Sorted by the newest library additions, ideal for recent OCI transfers and fresh catalog drops.</p>
+                            </article>
+                            <article class="logicCard">
+                                <h3>Newly Released</h3>
+                                <p>Movies use premiere dates. Malayalam TV uses series premiere dates so it feels closer to a premium discovery rail.</p>
+                            </article>
+                            <article class="logicCard">
+                                <h3>Language-aware</h3>
+                                <p>Point each row at the exact library IDs you want, keeping Malayalam shelves distinct from the broader English catalog.</p>
+                            </article>
+                        </div>
+                    </section>
+
+                    <section class="panel notesPanel">
+                        <div class="panelHeader">
+                            <div>
+                                <h2>Rollout notes</h2>
+                                <p>Helpful reminders while you tune the experience.</p>
+                            </div>
+                        </div>
+                        <ul class="checkList">
+                            <li>Install Home Screen Sections before expecting rows to appear.</li>
+                            <li>Use Plugin Pages for the settings experience.</li>
+                            <li>After saving, refresh the Jellyfin dashboard and reorder sections in Home Screen Sections if desired.</li>
+                        </ul>
+                    </section>
+                </div>
+
+                <div class="saveBar">
+                    <button is="emby-button" type="submit" class="raised button-submit block emby-button saveButton">Save Velvet Rows</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <style>
+        .velvetRowsPage {
+            --vr-bg: #09131f;
+            --vr-panel: linear-gradient(180deg, rgba(17, 30, 48, 0.96) 0%, rgba(10, 18, 31, 0.96) 100%);
+            --vr-panel-border: rgba(108, 148, 174, 0.18);
+            --vr-copy: #edf4fb;
+            --vr-muted: #96a9bb;
+            --vr-accent: #efb666;
+            --vr-accent-2: #5ed0c2;
+            --vr-shadow: 0 28px 60px rgba(0, 0, 0, 0.34);
+            background:
+                radial-gradient(circle at top left, rgba(94, 208, 194, 0.14), transparent 32%),
+                radial-gradient(circle at top right, rgba(239, 182, 102, 0.12), transparent 28%),
+                linear-gradient(180deg, #050b13 0%, #09131f 100%);
+            min-height: 100%;
+            color: var(--vr-copy);
+        }
+
+        .velvetRowsPage .content-primary {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 32px 24px 48px;
+        }
+
+        .velvetRowsPage .heroPanel,
+        .velvetRowsPage .panel,
+        .velvetRowsPage .saveBar {
+            background: var(--vr-panel);
+            border: 1px solid var(--vr-panel-border);
+            border-radius: 28px;
+            box-shadow: var(--vr-shadow);
+            backdrop-filter: blur(14px);
+        }
+
+        .velvetRowsPage .heroPanel {
+            display: grid;
+            grid-template-columns: 120px minmax(0, 1fr);
+            gap: 24px;
+            padding: 28px;
+            margin-bottom: 24px;
+            align-items: center;
+        }
+
+        .velvetRowsPage .heroMark {
+            width: 120px;
+            height: 120px;
+        }
+
+        .velvetRowsPage .heroCopy h1 {
+            margin: 6px 0 10px;
+            font-size: clamp(2rem, 3vw, 3.2rem);
+            line-height: 1;
+            letter-spacing: -0.04em;
+        }
+
+        .velvetRowsPage .heroCopy p,
+        .velvetRowsPage .panelHeader p,
+        .velvetRowsPage .fieldHelp,
+        .velvetRowsPage .logicCard p,
+        .velvetRowsPage .checkList {
+            color: var(--vr-muted);
+        }
+
+        .velvetRowsPage .eyebrow {
+            display: inline-flex;
+            text-transform: uppercase;
+            letter-spacing: 0.22em;
+            font-size: 0.72rem;
+            color: var(--vr-accent);
+        }
+
+        .velvetRowsPage .statusChips,
+        .velvetRowsPage .previewTags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .velvetRowsPage .chip,
+        .velvetRowsPage .pill,
+        .velvetRowsPage .previewTag {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 999px;
+            padding: 7px 12px;
+            font-size: 0.85rem;
+            line-height: 1;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .velvetRowsPage .chip.live {
+            background: rgba(94, 208, 194, 0.12);
+            color: #b8fff4;
+        }
+
+        .velvetRowsPage .chip.subtle,
+        .velvetRowsPage .pill {
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--vr-muted);
+        }
+
+        .velvetRowsPage .pill.accent {
+            color: #1a2630;
+            background: linear-gradient(135deg, var(--vr-accent) 0%, #ffd7a1 100%);
+            border-color: transparent;
+            font-weight: 700;
+        }
+
+        .velvetRowsPage .dashboardGrid {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .velvetRowsPage .secondaryGrid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .velvetRowsPage .panel {
+            padding: 24px;
+        }
+
+        .velvetRowsPage .panelHeader {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .velvetRowsPage .panelHeader h2 {
+            margin: 0 0 6px;
+            font-size: 1.25rem;
+        }
+
+        .velvetRowsPage .fieldLabel {
+            display: block;
+            font-weight: 700;
+            margin: 18px 0 8px;
+        }
+
+        .velvetRowsPage .rowsInput {
+            width: 100%;
+            box-sizing: border-box;
+            border-radius: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(7, 13, 22, 0.75);
+            color: var(--vr-copy);
+            padding: 14px 16px;
+            min-height: 88px;
+            font-family: "SFMono-Regular", Consolas, monospace;
+            resize: vertical;
+        }
+
+        .velvetRowsPage .previewList {
+            display: grid;
+            gap: 14px;
+        }
+
+        .velvetRowsPage .previewCard {
+            border-radius: 22px;
+            padding: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: linear-gradient(180deg, rgba(13, 24, 39, 0.92) 0%, rgba(8, 15, 26, 0.92) 100%);
+        }
+
+        .velvetRowsPage .previewCard h3 {
+            margin: 0 0 8px;
+            font-size: 1rem;
+        }
+
+        .velvetRowsPage .previewCard p {
+            margin: 0 0 12px;
+            color: var(--vr-muted);
+        }
+
+        .velvetRowsPage .previewTag.ready {
+            background: rgba(94, 208, 194, 0.12);
+            color: #b8fff4;
+        }
+
+        .velvetRowsPage .previewTag.waiting {
+            background: rgba(239, 182, 102, 0.12);
+            color: #ffdcb0;
+        }
+
+        .velvetRowsPage .logicGrid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .velvetRowsPage .logicCard {
+            border-radius: 20px;
+            padding: 16px;
+            background: rgba(7, 13, 22, 0.72);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .velvetRowsPage .logicCard h3 {
+            margin: 0 0 8px;
+            font-size: 1rem;
+        }
+
+        .velvetRowsPage .checkList {
+            margin: 0;
+            padding-left: 20px;
+            line-height: 1.7;
+        }
+
+        .velvetRowsPage .saveBar {
+            padding: 14px;
+        }
+
+        .velvetRowsPage .saveButton {
+            border-radius: 18px;
+            background: linear-gradient(135deg, var(--vr-accent) 0%, #ffd7a1 100%);
+            color: #14202c;
+            font-weight: 800;
+            min-height: 52px;
+        }
+
+        @media (max-width: 980px) {
+            .velvetRowsPage .dashboardGrid,
+            .velvetRowsPage .secondaryGrid,
+            .velvetRowsPage .logicGrid,
+            .velvetRowsPage .heroPanel {
+                grid-template-columns: 1fr;
+            }
+
+            .velvetRowsPage .heroPanel {
+                justify-items: start;
+            }
+        }
+    </style>
+
+    <script type="text/javascript">
+        (function () {
+            var pluginUniqueId = '4d9b1d2f-0a66-4d5f-9aa3-2a0a7ce4c7ab';
+            var page = document.querySelector('.velvetRowsPage');
+            var form = page.querySelector('.velvetRowsForm');
+            var fields = {
+                englishMovieLibraryIds: page.querySelector('#englishMovieLibraryIds'),
+                malayalamMovieLibraryIds: page.querySelector('#malayalamMovieLibraryIds'),
+                malayalamTvLibraryIds: page.querySelector('#malayalamTvLibraryIds')
+            };
+            var previewList = page.querySelector('#previewList');
+            var configuredCount = page.querySelector('#configuredCount');
+            var configCache = null;
+
+            function normalizeIds(value) {
+                return value
+                    .split(',')
+                    .map(function (item) { return item.trim(); })
+                    .filter(Boolean)
+                    .join(', ');
+            }
+
+            function countIds(value) {
+                if (!value) {
+                    return 0;
+                }
+
+                return value
+                    .split(',')
+                    .map(function (item) { return item.trim(); })
+                    .filter(Boolean)
+                    .length;
+            }
+
+            function previewRow(title, summary, count) {
+                var stateClass = count > 0 ? 'ready' : 'waiting';
+                var stateLabel = count > 0 ? count + ' library id' + (count > 1 ? 's' : '') : 'Needs routing';
+
+                return [
+                    '<article class="previewCard">',
+                    '<h3>' + title + '</h3>',
+                    '<p>' + summary + '</p>',
+                    '<div class="previewTags">',
+                    '<span class="previewTag ' + stateClass + '">' + stateLabel + '</span>',
+                    '</div>',
+                    '</article>'
+                ].join('');
+            }
+
+            function renderPreview() {
+                var englishCount = countIds(fields.englishMovieLibraryIds.value);
+                var malayalamMovieCount = countIds(fields.malayalamMovieLibraryIds.value);
+                var malayalamTvCount = countIds(fields.malayalamTvLibraryIds.value);
+                var configuredGroups = 0;
+
+                if (englishCount > 0) {
+                    configuredGroups += 1;
+                }
+
+                if (malayalamMovieCount > 0) {
+                    configuredGroups += 1;
+                }
+
+                if (malayalamTvCount > 0) {
+                    configuredGroups += 1;
+                }
+
+                configuredCount.textContent = configuredGroups + ' of 3 routed';
+                previewList.innerHTML = [
+                    previewRow('English Movies', 'Publishes newly added and newly released English movie rails.', englishCount),
+                    previewRow('Malayalam Movies', 'Publishes newly added and newly released Malayalam movie rails.', malayalamMovieCount),
+                    previewRow('Malayalam TV Shows', 'Publishes newly added and newly released Malayalam TV rails.', malayalamTvCount)
+                ].join('');
+            }
+
+            function loadConfig() {
+                Dashboard.showLoadingMsg();
+                ApiClient.getPluginConfiguration(pluginUniqueId).then(function (config) {
+                    configCache = config;
+                    fields.englishMovieLibraryIds.value = config.EnglishMovieLibraryIds || '';
+                    fields.malayalamMovieLibraryIds.value = config.MalayalamMovieLibraryIds || '';
+                    fields.malayalamTvLibraryIds.value = config.MalayalamTvLibraryIds || '';
+                    renderPreview();
+                    Dashboard.hideLoadingMsg();
+                });
+            }
+
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+                Dashboard.showLoadingMsg();
+                configCache.EnglishMovieLibraryIds = normalizeIds(fields.englishMovieLibraryIds.value);
+                configCache.MalayalamMovieLibraryIds = normalizeIds(fields.malayalamMovieLibraryIds.value);
+                configCache.MalayalamTvLibraryIds = normalizeIds(fields.malayalamTvLibraryIds.value);
+
+                ApiClient.updatePluginConfiguration(pluginUniqueId, configCache).then(function (result) {
+                    Dashboard.processPluginConfigurationUpdateResult(result);
+                    loadConfig();
+                });
+            });
+
+            Object.keys(fields).forEach(function (key) {
+                fields[key].addEventListener('input', renderPreview);
+            });
+
+            page.addEventListener('pageshow', loadConfig);
+        })();
+    </script>
+</div>
+</body>
+</html>
