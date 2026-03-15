@@ -9,6 +9,14 @@
     "imageUrl": "https://raw.githubusercontent.com/sharvinzlife/jellyfin-plugin-velvet-rows/main/assets/velvet-rows-logo.png",
     "versions": [
       {
+        "version": "1.2.2.0",
+        "changelog": "- Remove Tamil shelves from curated home\n- Update manifest for v1.2.1.0",
+        "targetAbi": "10.11.6.0",
+        "sourceUrl": "https://github.com/sharvinzlife/jellyfin-plugin-velvet-rows/releases/download/v1.2.2.0/velvet-rows_1.2.2.0.zip",
+        "checksum": "efcf656c2ef77157259ccb2bc25bbce7",
+        "timestamp": "2026-03-15T23:38:02Z"
+      },
+      {
         "version": "1.2.1.0",
         "changelog": "- Fix server-wide section enablement and inline logo\n- Update manifest for v1.2.0.0",
         "targetAbi": "10.11.6.0",
