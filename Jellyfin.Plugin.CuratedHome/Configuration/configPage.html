@@ -32,11 +32,11 @@
                     <div class="heroCopy">
                         <span class="eyebrow">Curated home screen plugin</span>
                         <h1>Velvet Rows</h1>
-                        <p>Design elegant discovery rails for Malayalam and English media with cleaner metadata filtering, genre shelves, and dedicated Velvet Rows Explore pages for each library group.</p>
+                        <p>Design elegant discovery rails for one focused language plus English media, with cleaner metadata filtering, genre shelves, and dedicated Velvet Rows Explore pages for each library group.</p>
                         <div class="statusChips">
                             <span class="chip live">Home Screen Sections</span>
                             <span class="chip live">Plugin Pages</span>
-                            <span class="chip subtle">Genre shelves</span>
+                            <span class="chip subtle">Focused language pack</span>
                         </div>
                     </div>
                 </div>
@@ -46,7 +46,7 @@
                         <div class="panelHeader">
                             <div>
                                 <h2>Routing and limits</h2>
-                                <p>Comma-separated library IDs. Malayalam TV can use a dedicated library or a shared TV library with match terms.</p>
+                                <p>Configure one focused language pack plus English. Focused TV can use a dedicated library or a shared TV library with language match terms.</p>
                             </div>
                             <span class="pill">Manage</span>
                         </div>
@@ -79,6 +79,22 @@
                             </span>
                         </label>
 
+                        <label class="fieldLabel" for="focusedLanguageDisplayName">Focused language display name</label>
+                        <input id="focusedLanguageDisplayName" class="emby-input rowsInput singleLineInput" type="text" spellcheck="false" placeholder="Malayalam" />
+                        <div class="fieldHelp">Examples: Malayalam, Tamil, Hindi, Japanese, Spanish.</div>
+
+                        <label class="fieldLabel" for="focusedMovieLibraryIds">Focused-language movie library IDs</label>
+                        <textarea id="focusedMovieLibraryIds" class="emby-input rowsInput" rows="2" spellcheck="false" placeholder="a104632f6a4906d2b9e6bd5e251d5b2d"></textarea>
+                        <div class="fieldHelp">Publishes your focused-language movie rails plus the matching Explore page.</div>
+
+                        <label class="fieldLabel" for="focusedTvLibraryIds">Focused-language TV source library IDs</label>
+                        <textarea id="focusedTvLibraryIds" class="emby-input rowsInput" rows="2" spellcheck="false" placeholder="f0cc8253-b4d1-07a2-da9a-6864e97a2251"></textarea>
+                        <div class="fieldHelp">Use a dedicated library when possible. Shared TV libraries work too.</div>
+
+                        <label class="fieldLabel" for="focusedTvMatchTerms">Focused-language TV match terms</label>
+                        <textarea id="focusedTvMatchTerms" class="emby-input rowsInput" rows="2" spellcheck="false" placeholder="malayalam, മലയാളം"></textarea>
+                        <div class="fieldHelp">Used when the TV source includes mixed languages.</div>
+
                         <label class="fieldLabel" for="englishMovieLibraryIds">English movie library IDs</label>
                         <textarea id="englishMovieLibraryIds" class="emby-input rowsInput" rows="2" spellcheck="false" placeholder="f137a2dd21bbc1b99aa5c0f6bf02a805"></textarea>
                         <div class="fieldHelp">Publishes English movie rails plus the English Movies Explore page.</div>
@@ -86,18 +102,6 @@
                         <label class="fieldLabel" for="englishTvLibraryIds">English TV library IDs</label>
                         <textarea id="englishTvLibraryIds" class="emby-input rowsInput" rows="2" spellcheck="false" placeholder="767bffe4f11c93ef34b805451a696a4e"></textarea>
                         <div class="fieldHelp">Publishes English TV rails and the English TV Explore page.</div>
-
-                        <label class="fieldLabel" for="malayalamMovieLibraryIds">Malayalam movie library IDs</label>
-                        <textarea id="malayalamMovieLibraryIds" class="emby-input rowsInput" rows="2" spellcheck="false" placeholder="a104632f6a4906d2b9e6bd5e251d5b2d"></textarea>
-                        <div class="fieldHelp">Publishes Malayalam movie rails plus the Malayalam Movies Explore page.</div>
-
-                        <label class="fieldLabel" for="malayalamTvLibraryIds">Malayalam TV source library IDs</label>
-                        <textarea id="malayalamTvLibraryIds" class="emby-input rowsInput" rows="2" spellcheck="false" placeholder="f0cc8253-b4d1-07a2-da9a-6864e97a2251"></textarea>
-                        <div class="fieldHelp">Use your Malayalam TV library ID if you have one. Shared TV libraries work too and feed Malayalam TV Explore.</div>
-
-                        <label class="fieldLabel" for="malayalamTvMatchTerms">Malayalam TV match terms</label>
-                        <textarea id="malayalamTvMatchTerms" class="emby-input rowsInput" rows="2" spellcheck="false" placeholder="malayalam, മലയാളം"></textarea>
-                        <div class="fieldHelp">Used only when the TV source includes mixed languages.</div>
                     </section>
 
                     <section class="panel insightPanel">
@@ -123,7 +127,7 @@
                         <div class="logicGrid">
                             <article class="logicCard">
                                 <h3>Newly Added</h3>
-                                <p>Ranks the freshest library additions so OCI transfers and recent drops rise to the top immediately.</p>
+                                <p>Ranks the freshest library additions so transfers and recent drops rise to the top immediately.</p>
                             </article>
                             <article class="logicCard">
                                 <h3>Newly Released</h3>
@@ -145,9 +149,9 @@
                         </div>
                         <ul class="checkList">
                             <li>Keep Home Screen Sections and Plugin Pages enabled.</li>
-                            <li>Use the dedicated Malayalam TV library when available for the cleanest results.</li>
-                            <li>Tamil titles in your Malayalam library are intentionally treated as part of the Malayalam shelves.</li>
-                            <li>Home shelf headers now point into the matching Velvet Rows Explore page when Plugin Pages is available.</li>
+                            <li>Use focused-language library IDs whenever you have clean dedicated libraries.</li>
+                            <li>Use match terms for shared TV libraries where one language lives alongside others.</li>
+                            <li>Home shelf headers route into the matching Velvet Rows Explore page when Plugin Pages is available.</li>
                             <li>If you change My Media pinning or genre shelf publishing, restart Jellyfin once so Home Screen Sections re-registers the updated layout.</li>
                         </ul>
                     </section>
@@ -199,6 +203,7 @@
         .velvetRowsPage .toggleRow small { display: block; color: var(--vr-muted); margin-top: 4px; line-height: 1.5; }
         .velvetRowsPage .rowsInput, .velvetRowsPage .limitInput { width: 100%; box-sizing: border-box; border-radius: 18px; border: 1px solid rgba(255, 255, 255, 0.08); background: rgba(7, 13, 22, 0.75); color: var(--vr-copy); padding: 14px 16px; }
         .velvetRowsPage .rowsInput { min-height: 74px; font-family: "SFMono-Regular", Consolas, monospace; resize: vertical; }
+        .velvetRowsPage .singleLineInput { min-height: 52px; font-family: inherit; resize: none; }
         .velvetRowsPage .limitInput { max-width: 160px; min-height: 52px; }
         .velvetRowsPage .previewList { display: grid; gap: 14px; }
         .velvetRowsPage .previewCard { border-radius: 22px; padding: 18px; border: 1px solid rgba(255, 255, 255, 0.08); background: linear-gradient(180deg, rgba(13, 24, 39, 0.92) 0%, rgba(8, 15, 26, 0.92) 100%); }
@@ -228,11 +233,12 @@
                 promoteMyMediaToTop: page.querySelector('#promoteMyMediaToTop'),
                 enableGenreShelves: page.querySelector('#enableGenreShelves'),
                 hideLowConfidenceTitles: page.querySelector('#hideLowConfidenceTitles'),
+                focusedLanguageDisplayName: page.querySelector('#focusedLanguageDisplayName'),
+                focusedMovieLibraryIds: page.querySelector('#focusedMovieLibraryIds'),
+                focusedTvLibraryIds: page.querySelector('#focusedTvLibraryIds'),
+                focusedTvMatchTerms: page.querySelector('#focusedTvMatchTerms'),
                 englishMovieLibraryIds: page.querySelector('#englishMovieLibraryIds'),
-                englishTvLibraryIds: page.querySelector('#englishTvLibraryIds'),
-                malayalamMovieLibraryIds: page.querySelector('#malayalamMovieLibraryIds'),
-                malayalamTvLibraryIds: page.querySelector('#malayalamTvLibraryIds'),
-                malayalamTvMatchTerms: page.querySelector('#malayalamTvMatchTerms')
+                englishTvLibraryIds: page.querySelector('#englishTvLibraryIds')
             };
             var previewList = page.querySelector('#previewList');
             var configuredCount = page.querySelector('#configuredCount');
@@ -248,6 +254,9 @@
                 if (!value) { return 0; }
                 return value.split(',').map(function (item) { return item.trim(); }).filter(Boolean).length;
             }
+            function focusedName() {
+                return (fields.focusedLanguageDisplayName.value || '').trim() || 'Focused Language';
+            }
             function previewRow(title, summary, count, stateOverride) {
                 var ready = stateOverride || count > 0;
                 var stateClass = ready ? 'ready' : 'waiting';
@@ -255,21 +264,22 @@
                 return ['<article class="previewCard">','<h3>' + title + '</h3>','<p>' + summary + '</p>','<div class="previewTags">','<span class="previewTag ' + stateClass + '">' + stateLabel + '</span>','</div>','</article>'].join('');
             }
             function renderPreview() {
+                var focusedMovieCount = countIds(fields.focusedMovieLibraryIds.value);
+                var focusedTvCount = countIds(fields.focusedTvLibraryIds.value);
+                var focusedTvTermsReady = normalizeTerms(fields.focusedTvMatchTerms.value).length > 0;
                 var englishMovieCount = countIds(fields.englishMovieLibraryIds.value);
                 var englishTvCount = countIds(fields.englishTvLibraryIds.value);
-                var malayalamMovieCount = countIds(fields.malayalamMovieLibraryIds.value);
-                var malayalamTvCount = countIds(fields.malayalamTvLibraryIds.value);
-                var malayalamTvTermsReady = normalizeTerms(fields.malayalamTvMatchTerms.value).length > 0;
                 var genreState = fields.enableGenreShelves.checked ? 'Genres on' : 'Genres off';
+                var displayName = focusedName();
                 var configuredGroups = 0;
+                if (focusedMovieCount > 0) { configuredGroups += 1; }
+                if (focusedTvCount > 0 || focusedTvTermsReady) { configuredGroups += 1; }
                 if (englishMovieCount > 0) { configuredGroups += 1; }
                 if (englishTvCount > 0) { configuredGroups += 1; }
-                if (malayalamMovieCount > 0) { configuredGroups += 1; }
-                if (malayalamTvCount > 0 || malayalamTvTermsReady) { configuredGroups += 1; }
                 configuredCount.textContent = configuredGroups + ' of 4 active';
                 previewList.innerHTML = [
-                    previewRow('Malayalam Movies', 'Home rails plus Malayalam Movies Explore. ' + genreState + '.', malayalamMovieCount),
-                    previewRow('Malayalam TV Shows', 'Home rails plus Malayalam TV Explore.', malayalamTvCount, malayalamTvTermsReady),
+                    previewRow(displayName + ' Movies', 'Home rails plus ' + displayName + ' Movies Explore. ' + genreState + '.', focusedMovieCount),
+                    previewRow(displayName + ' TV Shows', 'Home rails plus ' + displayName + ' TV Explore.', focusedTvCount, focusedTvTermsReady),
                     previewRow('English Movies', 'Home rails plus English Movies Explore. ' + genreState + '.', englishMovieCount),
                     previewRow('English TV Shows', 'Home rails plus English TV Explore.', englishTvCount)
                 ].join('');
@@ -282,11 +292,12 @@
                     fields.promoteMyMediaToTop.checked = config.PromoteMyMediaToTop !== false;
                     fields.enableGenreShelves.checked = config.EnableGenreShelves !== false;
                     fields.hideLowConfidenceTitles.checked = config.HideLowConfidenceTitles !== false;
+                    fields.focusedLanguageDisplayName.value = config.FocusedLanguageDisplayName || 'Malayalam';
+                    fields.focusedMovieLibraryIds.value = config.FocusedMovieLibraryIds || '';
+                    fields.focusedTvLibraryIds.value = config.FocusedTvLibraryIds || '';
+                    fields.focusedTvMatchTerms.value = config.FocusedTvMatchTerms || 'malayalam, മലയാളം';
                     fields.englishMovieLibraryIds.value = config.EnglishMovieLibraryIds || '';
                     fields.englishTvLibraryIds.value = config.EnglishTvLibraryIds || '';
-                    fields.malayalamMovieLibraryIds.value = config.MalayalamMovieLibraryIds || '';
-                    fields.malayalamTvLibraryIds.value = config.MalayalamTvLibraryIds || '';
-                    fields.malayalamTvMatchTerms.value = config.MalayalamTvMatchTerms || 'malayalam, മലയാളം';
                     renderPreview();
                     Dashboard.hideLoadingMsg();
                 });
@@ -298,11 +309,12 @@
                 configCache.PromoteMyMediaToTop = !!fields.promoteMyMediaToTop.checked;
                 configCache.EnableGenreShelves = !!fields.enableGenreShelves.checked;
                 configCache.HideLowConfidenceTitles = !!fields.hideLowConfidenceTitles.checked;
+                configCache.FocusedLanguageDisplayName = focusedName();
+                configCache.FocusedMovieLibraryIds = normalizeIds(fields.focusedMovieLibraryIds.value);
+                configCache.FocusedTvLibraryIds = normalizeIds(fields.focusedTvLibraryIds.value);
+                configCache.FocusedTvMatchTerms = normalizeTerms(fields.focusedTvMatchTerms.value) || 'malayalam, മലയാളം';
                 configCache.EnglishMovieLibraryIds = normalizeIds(fields.englishMovieLibraryIds.value);
                 configCache.EnglishTvLibraryIds = normalizeIds(fields.englishTvLibraryIds.value);
-                configCache.MalayalamMovieLibraryIds = normalizeIds(fields.malayalamMovieLibraryIds.value);
-                configCache.MalayalamTvLibraryIds = normalizeIds(fields.malayalamTvLibraryIds.value);
-                configCache.MalayalamTvMatchTerms = normalizeTerms(fields.malayalamTvMatchTerms.value) || 'malayalam, മലയാളം';
                 ApiClient.updatePluginConfiguration(pluginUniqueId, configCache).then(function (result) {
                     Dashboard.processPluginConfigurationUpdateResult(result);
                     loadConfig();

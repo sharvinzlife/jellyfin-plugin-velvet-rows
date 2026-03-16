@@ -17,7 +17,7 @@ namespace Jellyfin.Plugin.CuratedHome.Services;
 /// </summary>
 public sealed class CuratedSectionResultsProvider
 {
-    private static readonly string[] DefaultMalayalamTerms = ["malayalam", "മലയാളം"];
+    private static readonly string[] DefaultFocusedTerms = ["malayalam", "മലയാളം"];
     private static readonly string[] RomanceGenres = ["romance", "romantic", "love"];
     private static readonly string[] ThrillerGenres = ["thriller", "suspense", "mystery", "psychological thriller", "crime thriller"];
     private static readonly string[] ActionGenres = ["action", "adventure", "action & adventure", "martial arts", "war"];
@@ -88,24 +88,24 @@ public sealed class CuratedSectionResultsProvider
 
         IEnumerable<BaseItem> items = payload.AdditionalData switch
         {
-            "malayalam_movies_recent" => GetRecentlyAddedMovies(payload.UserId, config.MalayalamMovieLibraryIds, limit),
-            "malayalam_movies_latest" => GetLatestMovies(payload.UserId, config.MalayalamMovieLibraryIds, limit),
-            "malayalam_movies_romance" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.MalayalamMovieLibraryIds, limit, RomanceGenres) : Array.Empty<BaseItem>(),
-            "malayalam_movies_thriller" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.MalayalamMovieLibraryIds, limit, ThrillerGenres) : Array.Empty<BaseItem>(),
-            "malayalam_movies_action" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.MalayalamMovieLibraryIds, limit, ActionGenres) : Array.Empty<BaseItem>(),
-            "malayalam_movies_comedy" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.MalayalamMovieLibraryIds, limit, ComedyGenres) : Array.Empty<BaseItem>(),
-            "malayalam_movies_crime" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.MalayalamMovieLibraryIds, limit, CrimeGenres) : Array.Empty<BaseItem>(),
-            "malayalam_movies_family" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.MalayalamMovieLibraryIds, limit, FamilyGenres) : Array.Empty<BaseItem>(),
-            "malayalam_movies_mystery" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.MalayalamMovieLibraryIds, limit, MysteryGenres) : Array.Empty<BaseItem>(),
-            "malayalam_shows_recent" => GetRecentlyAddedShows(payload.UserId, config.MalayalamTvLibraryIds, config.MalayalamTvMatchTerms, limit, true),
-            "malayalam_shows_latest" => GetLatestShows(payload.UserId, config.MalayalamTvLibraryIds, config.MalayalamTvMatchTerms, limit, true),
-            "malayalam_shows_romance" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.MalayalamTvLibraryIds, config.MalayalamTvMatchTerms, limit, true, RomanceGenres) : Array.Empty<BaseItem>(),
-            "malayalam_shows_thriller" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.MalayalamTvLibraryIds, config.MalayalamTvMatchTerms, limit, true, ThrillerGenres) : Array.Empty<BaseItem>(),
-            "malayalam_shows_action" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.MalayalamTvLibraryIds, config.MalayalamTvMatchTerms, limit, true, ActionGenres) : Array.Empty<BaseItem>(),
-            "malayalam_shows_comedy" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.MalayalamTvLibraryIds, config.MalayalamTvMatchTerms, limit, true, ComedyGenres) : Array.Empty<BaseItem>(),
-            "malayalam_shows_crime" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.MalayalamTvLibraryIds, config.MalayalamTvMatchTerms, limit, true, CrimeGenres) : Array.Empty<BaseItem>(),
-            "malayalam_shows_family" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.MalayalamTvLibraryIds, config.MalayalamTvMatchTerms, limit, true, FamilyGenres) : Array.Empty<BaseItem>(),
-            "malayalam_shows_mystery" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.MalayalamTvLibraryIds, config.MalayalamTvMatchTerms, limit, true, MysteryGenres) : Array.Empty<BaseItem>(),
+            "featured_movies_recent" => GetRecentlyAddedMovies(payload.UserId, config.FocusedMovieLibraryIds, limit),
+            "featured_movies_latest" => GetLatestMovies(payload.UserId, config.FocusedMovieLibraryIds, limit),
+            "featured_movies_romance" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.FocusedMovieLibraryIds, limit, RomanceGenres) : Array.Empty<BaseItem>(),
+            "featured_movies_thriller" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.FocusedMovieLibraryIds, limit, ThrillerGenres) : Array.Empty<BaseItem>(),
+            "featured_movies_action" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.FocusedMovieLibraryIds, limit, ActionGenres) : Array.Empty<BaseItem>(),
+            "featured_movies_comedy" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.FocusedMovieLibraryIds, limit, ComedyGenres) : Array.Empty<BaseItem>(),
+            "featured_movies_crime" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.FocusedMovieLibraryIds, limit, CrimeGenres) : Array.Empty<BaseItem>(),
+            "featured_movies_family" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.FocusedMovieLibraryIds, limit, FamilyGenres) : Array.Empty<BaseItem>(),
+            "featured_movies_mystery" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.FocusedMovieLibraryIds, limit, MysteryGenres) : Array.Empty<BaseItem>(),
+            "featured_shows_recent" => GetRecentlyAddedShows(payload.UserId, config.FocusedTvLibraryIds, config.FocusedTvMatchTerms, limit, true),
+            "featured_shows_latest" => GetLatestShows(payload.UserId, config.FocusedTvLibraryIds, config.FocusedTvMatchTerms, limit, true),
+            "featured_shows_romance" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.FocusedTvLibraryIds, config.FocusedTvMatchTerms, limit, true, RomanceGenres) : Array.Empty<BaseItem>(),
+            "featured_shows_thriller" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.FocusedTvLibraryIds, config.FocusedTvMatchTerms, limit, true, ThrillerGenres) : Array.Empty<BaseItem>(),
+            "featured_shows_action" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.FocusedTvLibraryIds, config.FocusedTvMatchTerms, limit, true, ActionGenres) : Array.Empty<BaseItem>(),
+            "featured_shows_comedy" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.FocusedTvLibraryIds, config.FocusedTvMatchTerms, limit, true, ComedyGenres) : Array.Empty<BaseItem>(),
+            "featured_shows_crime" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.FocusedTvLibraryIds, config.FocusedTvMatchTerms, limit, true, CrimeGenres) : Array.Empty<BaseItem>(),
+            "featured_shows_family" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.FocusedTvLibraryIds, config.FocusedTvMatchTerms, limit, true, FamilyGenres) : Array.Empty<BaseItem>(),
+            "featured_shows_mystery" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.FocusedTvLibraryIds, config.FocusedTvMatchTerms, limit, true, MysteryGenres) : Array.Empty<BaseItem>(),
             "english_movies_recent" => GetRecentlyAddedMovies(payload.UserId, config.EnglishMovieLibraryIds, limit),
             "english_movies_latest" => GetLatestMovies(payload.UserId, config.EnglishMovieLibraryIds, limit),
             "english_movies_romance" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.EnglishMovieLibraryIds, limit, RomanceGenres) : Array.Empty<BaseItem>(),
@@ -210,7 +210,7 @@ public sealed class CuratedSectionResultsProvider
             .Take(limit);
     }
 
-    private IEnumerable<BaseItem> GetRecentlyAddedShows(Guid userId, string configuredLibraryIds, string configuredMatchTerms, int limit, bool useDefaultMalayalamTerms)
+    private IEnumerable<BaseItem> GetRecentlyAddedShows(Guid userId, string configuredLibraryIds, string configuredMatchTerms, int limit, bool useDefaultFocusedTerms)
     {
         var user = _userManager.GetUserById(userId);
         if (user is null)
@@ -239,7 +239,7 @@ public sealed class CuratedSectionResultsProvider
                 Series = g.First().Series!,
                 SortDate = g.Max(x => x.DateCreated),
             })
-            .Where(x => MatchesConfiguredTerms(x.Series, configuredMatchTerms, useDefaultMalayalamTerms))
+            .Where(x => MatchesConfiguredTerms(x.Series, configuredMatchTerms, useDefaultFocusedTerms))
             .Where(x => IsCuratedMetadataSafe(x.Series))
             .OrderByDescending(x => x.SortDate)
             .Take(limit)
@@ -248,7 +248,7 @@ public sealed class CuratedSectionResultsProvider
         return ResolveSeriesInOrder(userId, seriesOrder.Select(x => x.Series.Id).ToArray());
     }
 
-    private IEnumerable<BaseItem> GetLatestShows(Guid userId, string configuredLibraryIds, string configuredMatchTerms, int limit, bool useDefaultMalayalamTerms)
+    private IEnumerable<BaseItem> GetLatestShows(Guid userId, string configuredLibraryIds, string configuredMatchTerms, int limit, bool useDefaultFocusedTerms)
     {
         var user = _userManager.GetUserById(userId);
         if (user is null)
@@ -267,7 +267,7 @@ public sealed class CuratedSectionResultsProvider
                 IsMissing = false,
             }).Items)
             .OfType<Series>()
-            .Where(x => MatchesConfiguredTerms(x, configuredMatchTerms, useDefaultMalayalamTerms))
+            .Where(x => MatchesConfiguredTerms(x, configuredMatchTerms, useDefaultFocusedTerms))
             .Where(IsCuratedMetadataSafe)
             .DistinctBy(x => x.Id)
             .Select(x => new
@@ -313,7 +313,7 @@ public sealed class CuratedSectionResultsProvider
             .Take(limit);
     }
 
-    private IEnumerable<BaseItem> GetGenreShows(Guid userId, string configuredLibraryIds, string configuredMatchTerms, int limit, bool useDefaultMalayalamTerms, string[] genres)
+    private IEnumerable<BaseItem> GetGenreShows(Guid userId, string configuredLibraryIds, string configuredMatchTerms, int limit, bool useDefaultFocusedTerms, string[] genres)
     {
         var user = _userManager.GetUserById(userId);
         if (user is null)
@@ -333,7 +333,7 @@ public sealed class CuratedSectionResultsProvider
             }).Items)
             .OfType<Series>()
             .Where(IsCuratedMetadataSafe)
-            .Where(x => MatchesConfiguredTerms(x, configuredMatchTerms, useDefaultMalayalamTerms))
+            .Where(x => MatchesConfiguredTerms(x, configuredMatchTerms, useDefaultFocusedTerms))
             .Where(x => MatchesGenres(x, genres))
             .DistinctBy(x => x.Id)
             .Select(x => new
@@ -347,7 +347,7 @@ public sealed class CuratedSectionResultsProvider
             .Take(limit);
     }
 
-    private bool MatchesConfiguredTerms(BaseItem item, string configuredMatchTerms, bool useDefaultMalayalamTerms)
+    private bool MatchesConfiguredTerms(BaseItem item, string configuredMatchTerms, bool useDefaultFocusedTerms)
     {
         var searchTerms = configuredMatchTerms
             .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
@@ -356,7 +356,7 @@ public sealed class CuratedSectionResultsProvider
 
         if (searchTerms.Length == 0)
         {
-            searchTerms = useDefaultMalayalamTerms ? DefaultMalayalamTerms : Array.Empty<string>();
+            searchTerms = useDefaultFocusedTerms ? DefaultFocusedTerms : Array.Empty<string>();
         }
 
         if (searchTerms.Length == 0)

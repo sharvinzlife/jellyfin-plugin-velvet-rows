@@ -1,4 +1,5 @@
 using System.Text.Encodings.Web;
+using Jellyfin.Plugin.CuratedHome.Configuration;
 using Jellyfin.Plugin.CuratedHome.Explore;
 using Jellyfin.Plugin.CuratedHome.Model;
 using Jellyfin.Plugin.CuratedHome.Services;
@@ -37,7 +38,8 @@ public sealed class ExplorePagesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult GetPage([FromQuery] string page)
     {
-        var definition = ExplorePageCatalog.Find(page);
+        var config = Plugin.Instance?.Configuration ?? new PluginConfiguration();
+        var definition = ExplorePageCatalog.Find(page, config);
         if (definition is null)
         {
             return NotFound();
@@ -70,15 +72,15 @@ public sealed class ExplorePagesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public ActionResult<object> GetExploreData([FromQuery] string page, [FromQuery] Guid userId)
     {
-        var definition = ExplorePageCatalog.Find(page);
+        var config = Plugin.Instance?.Configuration ?? new PluginConfiguration();
+        var definition = ExplorePageCatalog.Find(page, config);
         if (definition is null)
         {
             return NotFound();
         }
 
-        var config = Plugin.Instance?.Configuration;
         var shelves = definition.Shelves
-            .Where(shelf => (config?.EnableGenreShelves ?? true) || !shelf.DataKey.Contains("_romance", StringComparison.Ordinal) && !shelf.DataKey.Contains("_thriller", StringComparison.Ordinal) && !shelf.DataKey.Contains("_action", StringComparison.Ordinal))
+            .Where(shelf => config.EnableGenreShelves || !IsGenreShelf(shelf.DataKey))
             .Select(shelf => new
             {
                 id = shelf.DataKey,
@@ -99,5 +101,16 @@ public sealed class ExplorePagesController : ControllerBase
             description = definition.Description,
             shelves,
         });
+    }
+
+    private static bool IsGenreShelf(string dataKey)
+    {
+        return dataKey.EndsWith("_romance", StringComparison.Ordinal)
+            || dataKey.EndsWith("_thriller", StringComparison.Ordinal)
+            || dataKey.EndsWith("_action", StringComparison.Ordinal)
+            || dataKey.EndsWith("_comedy", StringComparison.Ordinal)
+            || dataKey.EndsWith("_crime", StringComparison.Ordinal)
+            || dataKey.EndsWith("_family", StringComparison.Ordinal)
+            || dataKey.EndsWith("_mystery", StringComparison.Ordinal);
     }
 }

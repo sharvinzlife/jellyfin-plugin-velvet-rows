@@ -141,7 +141,9 @@ internal sealed class HomeSectionRegistrationService : BackgroundService
             return false;
         }
 
-        foreach (var definition in ExplorePageCatalog.All)
+        var config = Plugin.Instance?.Configuration ?? new PluginConfiguration();
+
+        foreach (var definition in ExplorePageCatalog.GetAll(config))
         {
             var page = Activator.CreateInstance(pageType);
             if (page is null)

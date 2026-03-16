@@ -28,6 +28,11 @@ public class PluginConfiguration : BasePluginConfiguration
     public bool HideLowConfidenceTitles { get; set; } = true;
 
     /// <summary>
+    /// Gets or sets the friendly label for the configurable focused-language pack.
+    /// </summary>
+    public string FocusedLanguageDisplayName { get; set; } = "Malayalam";
+
+    /// <summary>
     /// Gets or sets the English movie library ids.
     /// </summary>
     public string EnglishMovieLibraryIds { get; set; } = string.Empty;
@@ -38,17 +43,17 @@ public class PluginConfiguration : BasePluginConfiguration
     public string EnglishTvLibraryIds { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the Malayalam movie library ids.
+    /// Gets or sets the focused-language movie library ids.
     /// </summary>
-    public string MalayalamMovieLibraryIds { get; set; } = string.Empty;
+    public string FocusedMovieLibraryIds { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the Malayalam TV source library ids.
+    /// Gets or sets the focused-language TV source library ids.
     /// </summary>
-    public string MalayalamTvLibraryIds { get; set; } = string.Empty;
+    public string FocusedTvLibraryIds { get; set; } = string.Empty;
 
     /// <summary>
-    /// Gets or sets the Malayalam TV metadata match terms.
+    /// Gets or sets the focused-language TV metadata match terms.
     /// </summary>
-    public string MalayalamTvMatchTerms { get; set; } = "malayalam, മലയാളം";
+    public string FocusedTvMatchTerms { get; set; } = "malayalam, മലയാളം";
 }
