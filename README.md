@@ -11,23 +11,41 @@ It is designed to pair with [Home Screen Sections](https://github.com/IAmParadox
 
 - Malayalam Movies - Newly Added
 - Malayalam Movies - Newly Released
+- Malayalam Movies - Romance and Love
+- Malayalam Movies - Thriller and Suspense
+- Malayalam Movies - Action and Adventure
+- Malayalam Movies - Comedy
+- Malayalam Movies - Crime and Mystery
+- Malayalam Movies - Family
+- Malayalam Movies - Mystery
 - Malayalam TV Shows - Newly Added
 - Malayalam TV Shows - Newly Released
 - English Movies - Newly Added
 - English Movies - Newly Released
+- English Movies - Romance and Love
+- English Movies - Thriller and Suspense
+- English Movies - Action and Adventure
+- English Movies - Comedy
+- English Movies - Crime and Mystery
+- English Movies - Family
+- English Movies - Mystery
 - English TV Shows - Newly Added
 - English TV Shows - Newly Released
 
 ## Why it exists
 
- Plex-style discovery rails feel great, but Jellyfin home screens often need more curation when media is split across language-specific libraries or mixed libraries. Velvet Rows gives you focused shelves without forking the whole home screen experience.
+ Plex-style discovery rails feel great, but Jellyfin home screens often need more curation when media is split across language-specific libraries or mixed libraries. Velvet Rows gives you focused shelves without forking the whole home screen experience, then adds dedicated Explore pages for each library group.
 
 ## Highlights
 
 - Dedicated movie shelves for English and Malayalam libraries
+- Genre-driven shelves for romance, thriller, action, comedy, crime, family, and mystery discovery
 - English TV shelves for your main TV library
 - Metadata-aware Malayalam TV shelves that can filter a shared TV library or use a dedicated Malayalam TV library
-- Smarter newly released sorting with fallback to production year and creation time when release metadata is sparse
+- Library-group Explore pages delivered through Plugin Pages
+- Cleaner curated shelves that hide low-confidence filename-style titles
+- Smarter newly released sorting that only trusts premiere dates and production year
+- Stronger Home Screen Sections default syncing so existing and future users inherit the curated layout more reliably
 - Polished plugin settings UI inside Jellyfin
 - GitHub Actions for CI builds and tagged zip releases
 - Custom Jellyfin plugin repository manifest for simpler future installs and updates
@@ -35,18 +53,40 @@ It is designed to pair with [Home Screen Sections](https://github.com/IAmParadox
 ## Release logic
 
 - `Newly Added`: sorted by recent library additions
-- `Newly Released` for movies and shows: sorted by premiere date first, then production year, then creation time as a fallback
+- `Newly Released` for movies and shows: sorted by premiere date first, then production year
+- Genre shelves: require clean metadata and matching Jellyfin genres
+- Low-confidence filename titles can be hidden from all curated shelves
 
 ## Configuration
 
 Velvet Rows exposes a management page inside Jellyfin where you can configure:
 
 - row size limit
+- whether `My Media` is pinned to the top
+- whether genre shelves are enabled
+- whether low-confidence filename-like titles are hidden
 - English movie library IDs
 - English TV library IDs
 - Malayalam movie library IDs
 - Malayalam TV source library IDs
 - Malayalam TV metadata match terms
+
+## Explore pages
+
+Velvet Rows also registers dedicated user-facing pages through Plugin Pages:
+
+- Malayalam Movies Explore
+- English Movies Explore
+- Malayalam TV Explore
+- English TV Explore
+
+Each page bundles newly added, newly released, and genre-led shelves for that library group.
+
+## Client note
+
+Velvet Rows works best anywhere Jellyfin is rendering the hosted web interface. That includes the official web client and LG webOS, whose official app is a wrapper around Jellyfin Web:
+
+- [Jellyfin for webOS](https://github.com/jellyfin/jellyfin-webos)
 
 ## Jellyfin repository manifest
 
@@ -63,6 +103,8 @@ https://raw.githubusercontent.com/sharvinzlife/jellyfin-plugin-velvet-rows/main/
 3. Install `Velvet Rows`.
 4. Keep `Home Screen Sections` and `Plugin Pages` enabled.
 5. Open `Dashboard -> Plugins -> Velvet Rows` and set your library routing.
+6. Reopen the web client or LG webOS app so the updated shelves and Explore pages are picked up.
+7. Restart Jellyfin after changing My Media pinning or genre shelf publishing so the home layout re-registers cleanly.
 
 ## Build
 

@@ -1,6 +1,6 @@
 namespace Jellyfin.Plugin.CuratedHome.Sections;
 
-public sealed record SectionDefinition(
+internal sealed record SectionDefinition(
     string Id,
     string DisplayText,
     string AdditionalData,
