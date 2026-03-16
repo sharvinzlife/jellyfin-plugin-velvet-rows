@@ -2,6 +2,8 @@ using System.Text.Encodings.Web;
 using Jellyfin.Plugin.CuratedHome.Explore;
 using Jellyfin.Plugin.CuratedHome.Model;
 using Jellyfin.Plugin.CuratedHome.Services;
+using MediaBrowser.Model.Dto;
+using MediaBrowser.Model.Querying;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -99,5 +101,18 @@ public sealed class ExplorePagesController : ControllerBase
             description = definition.Description,
             shelves,
         });
+    }
+
+    /// <summary>
+    /// Resolves a Home Screen Sections custom row over HTTP.
+    /// </summary>
+    /// <param name="payload">The requesting user and section key.</param>
+    /// <returns>The DTO results for the requested row.</returns>
+    [HttpPost("HomeSectionResults")]
+    [AllowAnonymous]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public ActionResult<QueryResult<BaseItemDto>> GetHomeSectionResults([FromBody] SectionRequest payload)
+    {
+        return Ok(_resultsProvider.GetResults(payload));
     }
 }

@@ -9,7 +9,7 @@
     <Description>Curated Jellyfin home rows for language-aware newly added and newly released media.</Description>
     <Company>Sharvinzlife</Company>
     <Authors>Sharvin</Authors>
-    <Version>1.3.1.0</Version>
+    <Version>1.3.5.0</Version>
     <FileVersion>1.3.1.0</FileVersion>
     <RepositoryUrl>https://github.com/sharvinzlife/jellyfin-plugin-velvet-rows</RepositoryUrl>
     <PackageProjectUrl>https://github.com/sharvinzlife/jellyfin-plugin-velvet-rows</PackageProjectUrl>

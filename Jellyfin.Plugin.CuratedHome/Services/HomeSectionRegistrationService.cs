@@ -89,14 +89,6 @@ internal sealed class HomeSectionRegistrationService : BackgroundService
             return false;
         }
 
-        var providerType = _resultsProvider.GetType();
-        var providerAssemblyName = providerType.Assembly.FullName;
-        var providerTypeName = providerType.FullName;
-        if (string.IsNullOrWhiteSpace(providerAssemblyName) || string.IsNullOrWhiteSpace(providerTypeName))
-        {
-            return false;
-        }
-
         foreach (var definition in SectionDefinitions.GetEnabled(Plugin.Instance?.Configuration ?? new PluginConfiguration()))
         {
             var payload = JObject.FromObject(new
@@ -105,9 +97,7 @@ internal sealed class HomeSectionRegistrationService : BackgroundService
                 displayText = definition.DisplayText,
                 route = definition.Route,
                 additionalData = definition.AdditionalData,
-                resultsAssembly = providerAssemblyName,
-                resultsClass = providerTypeName,
-                resultsMethod = nameof(CuratedSectionResultsProvider.GetResults),
+                resultsEndpoint = "/VelvetRows/HomeSectionResults",
             });
 
             registerMethod.Invoke(null, [payload]);

@@ -51,6 +51,11 @@ public sealed class CuratedSectionResultsProvider
     private readonly ILogger<CuratedSectionResultsProvider> _logger;
 
     /// <summary>
+    /// Gets the active singleton results provider resolved from Jellyfin DI.
+    /// </summary>
+    public static CuratedSectionResultsProvider? Current { get; private set; }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="CuratedSectionResultsProvider"/> class.
     /// </summary>
     /// <param name="libraryManager">The Jellyfin library manager.</param>
@@ -67,6 +72,7 @@ public sealed class CuratedSectionResultsProvider
         _userManager = userManager;
         _dtoService = dtoService;
         _logger = logger;
+        Current = this;
     }
 
     /// <summary>
@@ -74,7 +80,17 @@ public sealed class CuratedSectionResultsProvider
     /// </summary>
     /// <param name="payload">The requesting user and shelf key.</param>
     /// <returns>The items for the requested shelf.</returns>
-    public QueryResult<BaseItemDto> GetResults(SectionRequest payload)
+    public QueryResult<BaseItemDto> GetResults(object? payload)
+    {
+        if (!TryBuildSectionRequest(payload, out var request))
+        {
+            return new QueryResult<BaseItemDto>(Array.Empty<BaseItemDto>());
+        }
+
+        return GetResultsForRequest(request);
+    }
+
+    private QueryResult<BaseItemDto> GetResultsForRequest(SectionRequest payload)
     {
         var user = _userManager.GetUserById(payload.UserId);
         if (user is null)
@@ -132,6 +148,49 @@ public sealed class CuratedSectionResultsProvider
             .ToArray();
 
         return new QueryResult<BaseItemDto>(dtoItems);
+    }
+
+    private static bool TryBuildSectionRequest(object? payload, out SectionRequest request)
+    {
+        if (payload is SectionRequest typedRequest)
+        {
+            request = typedRequest;
+            return true;
+        }
+
+        request = new SectionRequest();
+        if (payload is null)
+        {
+            return false;
+        }
+
+        var payloadType = payload.GetType();
+        var userIdValue = payloadType.GetProperty("UserId")?.GetValue(payload);
+        var additionalDataValue = payloadType.GetProperty("AdditionalData")?.GetValue(payload);
+
+        if (!TryConvertToGuid(userIdValue, out var userId))
+        {
+            return false;
+        }
+
+        request.UserId = userId;
+        request.AdditionalData = additionalDataValue?.ToString() ?? string.Empty;
+        return true;
+    }
+
+    private static bool TryConvertToGuid(object? value, out Guid guid)
+    {
+        switch (value)
+        {
+            case Guid typedGuid:
+                guid = typedGuid;
+                return true;
+            case string raw when Guid.TryParse(raw, out guid):
+                return true;
+            default:
+                guid = Guid.Empty;
+                return false;
+        }
     }
 
     private DtoOptions BuildDtoOptions()
