@@ -128,7 +128,14 @@ public sealed class CuratedSectionResultsProvider
                 IsMissing = false,
             }).Items)
             .DistinctBy(x => x.Id)
-            .OrderByDescending(GetReleaseSortDate)
+            .Select(x => new
+            {
+                Item = x,
+                SortDate = GetTrustedReleaseSortDate(x),
+            })
+            .Where(x => x.SortDate.HasValue)
+            .OrderByDescending(x => x.SortDate!.Value)
+            .Select(x => x.Item)
             .Take(limit);
     }
 
@@ -190,7 +197,14 @@ public sealed class CuratedSectionResultsProvider
             .OfType<Series>()
             .Where(x => MatchesConfiguredTerms(x, configuredMatchTerms, useDefaultMalayalamTerms))
             .DistinctBy(x => x.Id)
-            .OrderByDescending(GetReleaseSortDate)
+            .Select(x => new
+            {
+                Item = x,
+                SortDate = GetTrustedReleaseSortDate(x),
+            })
+            .Where(x => x.SortDate.HasValue)
+            .OrderByDescending(x => x.SortDate!.Value)
+            .Select(x => x.Item)
             .Take(limit);
     }
 
@@ -286,7 +300,7 @@ public sealed class CuratedSectionResultsProvider
             .Cast<BaseItem>();
     }
 
-    private DateTime GetReleaseSortDate(BaseItem item)
+    private DateTime? GetTrustedReleaseSortDate(BaseItem item)
     {
         if (item.PremiereDate.HasValue)
         {
@@ -298,6 +312,6 @@ public sealed class CuratedSectionResultsProvider
             return new DateTime(item.ProductionYear.Value, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         }
 
-        return item.DateCreated;
+        return null;
     }
 }
