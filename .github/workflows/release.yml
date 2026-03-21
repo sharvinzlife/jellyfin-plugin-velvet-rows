@@ -44,6 +44,7 @@ jobs:
         run: |
           dotnet publish Jellyfin.Plugin.CuratedHome/Jellyfin.Plugin.CuratedHome.csproj -c Release -o dist/publish
           cp assets/velvet-rows-logo.png dist/publish/logo.png
+          rm -rf dist/publish/runtimes
           cd dist/publish
           zip -r ../"$ZIP_NAME" .
           cd ..

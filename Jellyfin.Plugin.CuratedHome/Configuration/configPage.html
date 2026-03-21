@@ -67,7 +67,7 @@
                             <input id="enableGenreShelves" class="emby-checkbox" type="checkbox" />
                             <span>
                                 <strong>Enable genre shelves</strong>
-                                <small>Publishes Romance, Thriller, Action, Comedy, Crime, Family, and Mystery shelves on home and in the Explore pages.</small>
+                                <small>Publishes Romance, Thriller, Action, Comedy, Crime, Family, and Mystery shelves as mixed picks from the full configured library on home and in the Explore pages.</small>
                             </span>
                         </label>
 
@@ -131,7 +131,7 @@
                             </article>
                             <article class="logicCard">
                                 <h3>Genre discovery</h3>
-                                <p>Romance, Thriller, Action, Comedy, Crime, Family, and Mystery shelves lean on Jellyfin genres instead of filenames, then route into dedicated Explore pages.</p>
+                                <p>Romance, Thriller, Action, Comedy, Crime, Family, and Mystery shelves pull a mixed library-wide set using Jellyfin genres instead of ranking by newest additions or releases.</p>
                             </article>
                         </div>
                     </section>
@@ -147,6 +147,7 @@
                             <li>Keep Home Screen Sections and Plugin Pages enabled.</li>
                             <li>Use the dedicated Malayalam TV library when available for the cleanest results.</li>
                             <li>Tamil titles in your Malayalam library are intentionally treated as part of the Malayalam shelves.</li>
+                            <li>Genre shelves are always mixed across the full matched library instead of being latest-first.</li>
                             <li>Home shelf headers now point into the matching Velvet Rows Explore page when Plugin Pages is available.</li>
                             <li>If you change My Media pinning or genre shelf publishing, restart Jellyfin once so Home Screen Sections re-registers the updated layout.</li>
                         </ul>

@@ -3,7 +3,7 @@
     "guid": "4d9b1d2f-0a66-4d5f-9aa3-2a0a7ce4c7ab",
     "name": "Velvet Rows",
     "overview": "Curated Jellyfin home rails for language-aware discovery.",
-    "description": "Velvet Rows adds curated homepage shelves for English, Malayalam, and Tamil movies plus metadata-aware Malayalam TV discovery inside Jellyfin.",
+    "description": "Velvet Rows adds curated homepage shelves for English and Malayalam movies plus metadata-aware TV discovery inside Jellyfin.",
     "owner": "Sharvinzlife",
     "category": "General",
     "imageUrl": "https://raw.githubusercontent.com/sharvinzlife/jellyfin-plugin-velvet-rows/main/assets/velvet-rows-logo.png",

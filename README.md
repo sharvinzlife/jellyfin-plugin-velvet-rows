@@ -40,6 +40,7 @@ It is designed to pair with [Home Screen Sections](https://github.com/IAmParadox
 
 - Dedicated movie shelves for English and Malayalam libraries
 - Genre-driven shelves for romance, thriller, action, comedy, crime, family, and mystery discovery
+- Genre shelves always pull a mixed set from the full matched library instead of ranking by newest titles
 - English TV shelves for your main TV library
 - Metadata-aware Malayalam TV shelves that can filter a shared TV library or use a dedicated Malayalam TV library
 - Library-group Explore pages delivered through Plugin Pages
@@ -54,7 +55,7 @@ It is designed to pair with [Home Screen Sections](https://github.com/IAmParadox
 
 - `Newly Added`: sorted by recent library additions
 - `Newly Released` for movies and shows: sorted by premiere date first, then production year
-- Genre shelves: require clean metadata and matching Jellyfin genres
+- Genre shelves: require clean metadata and matching Jellyfin genres, then pull a mixed library-wide set instead of newest-first ranking
 - Low-confidence filename titles can be hidden from all curated shelves
 
 ## Configuration

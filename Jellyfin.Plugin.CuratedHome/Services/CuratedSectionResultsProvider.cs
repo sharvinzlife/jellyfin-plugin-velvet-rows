@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+using System.Text;
 using Jellyfin.Data.Enums;
 using Jellyfin.Plugin.CuratedHome.Configuration;
 using Jellyfin.Plugin.CuratedHome.Model;
@@ -51,11 +53,6 @@ public sealed class CuratedSectionResultsProvider
     private readonly ILogger<CuratedSectionResultsProvider> _logger;
 
     /// <summary>
-    /// Gets the active singleton results provider resolved from Jellyfin DI.
-    /// </summary>
-    public static CuratedSectionResultsProvider? Current { get; private set; }
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="CuratedSectionResultsProvider"/> class.
     /// </summary>
     /// <param name="libraryManager">The Jellyfin library manager.</param>
@@ -72,7 +69,6 @@ public sealed class CuratedSectionResultsProvider
         _userManager = userManager;
         _dtoService = dtoService;
         _logger = logger;
-        Current = this;
     }
 
     /// <summary>
@@ -80,17 +76,7 @@ public sealed class CuratedSectionResultsProvider
     /// </summary>
     /// <param name="payload">The requesting user and shelf key.</param>
     /// <returns>The items for the requested shelf.</returns>
-    public QueryResult<BaseItemDto> GetResults(object? payload)
-    {
-        if (!TryBuildSectionRequest(payload, out var request))
-        {
-            return new QueryResult<BaseItemDto>(Array.Empty<BaseItemDto>());
-        }
-
-        return GetResultsForRequest(request);
-    }
-
-    private QueryResult<BaseItemDto> GetResultsForRequest(SectionRequest payload)
+    public QueryResult<BaseItemDto> GetResults(SectionRequest payload)
     {
         var user = _userManager.GetUserById(payload.UserId);
         if (user is null)
@@ -106,40 +92,40 @@ public sealed class CuratedSectionResultsProvider
         {
             "malayalam_movies_recent" => GetRecentlyAddedMovies(payload.UserId, config.MalayalamMovieLibraryIds, limit),
             "malayalam_movies_latest" => GetLatestMovies(payload.UserId, config.MalayalamMovieLibraryIds, limit),
-            "malayalam_movies_romance" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.MalayalamMovieLibraryIds, limit, RomanceGenres) : Array.Empty<BaseItem>(),
-            "malayalam_movies_thriller" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.MalayalamMovieLibraryIds, limit, ThrillerGenres) : Array.Empty<BaseItem>(),
-            "malayalam_movies_action" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.MalayalamMovieLibraryIds, limit, ActionGenres) : Array.Empty<BaseItem>(),
-            "malayalam_movies_comedy" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.MalayalamMovieLibraryIds, limit, ComedyGenres) : Array.Empty<BaseItem>(),
-            "malayalam_movies_crime" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.MalayalamMovieLibraryIds, limit, CrimeGenres) : Array.Empty<BaseItem>(),
-            "malayalam_movies_family" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.MalayalamMovieLibraryIds, limit, FamilyGenres) : Array.Empty<BaseItem>(),
-            "malayalam_movies_mystery" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.MalayalamMovieLibraryIds, limit, MysteryGenres) : Array.Empty<BaseItem>(),
+            "malayalam_movies_romance" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.MalayalamMovieLibraryIds, limit, payload.AdditionalData ?? string.Empty, RomanceGenres) : Array.Empty<BaseItem>(),
+            "malayalam_movies_thriller" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.MalayalamMovieLibraryIds, limit, payload.AdditionalData ?? string.Empty, ThrillerGenres) : Array.Empty<BaseItem>(),
+            "malayalam_movies_action" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.MalayalamMovieLibraryIds, limit, payload.AdditionalData ?? string.Empty, ActionGenres) : Array.Empty<BaseItem>(),
+            "malayalam_movies_comedy" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.MalayalamMovieLibraryIds, limit, payload.AdditionalData ?? string.Empty, ComedyGenres) : Array.Empty<BaseItem>(),
+            "malayalam_movies_crime" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.MalayalamMovieLibraryIds, limit, payload.AdditionalData ?? string.Empty, CrimeGenres) : Array.Empty<BaseItem>(),
+            "malayalam_movies_family" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.MalayalamMovieLibraryIds, limit, payload.AdditionalData ?? string.Empty, FamilyGenres) : Array.Empty<BaseItem>(),
+            "malayalam_movies_mystery" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.MalayalamMovieLibraryIds, limit, payload.AdditionalData ?? string.Empty, MysteryGenres) : Array.Empty<BaseItem>(),
             "malayalam_shows_recent" => GetRecentlyAddedShows(payload.UserId, config.MalayalamTvLibraryIds, config.MalayalamTvMatchTerms, limit, true),
             "malayalam_shows_latest" => GetLatestShows(payload.UserId, config.MalayalamTvLibraryIds, config.MalayalamTvMatchTerms, limit, true),
-            "malayalam_shows_romance" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.MalayalamTvLibraryIds, config.MalayalamTvMatchTerms, limit, true, RomanceGenres) : Array.Empty<BaseItem>(),
-            "malayalam_shows_thriller" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.MalayalamTvLibraryIds, config.MalayalamTvMatchTerms, limit, true, ThrillerGenres) : Array.Empty<BaseItem>(),
-            "malayalam_shows_action" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.MalayalamTvLibraryIds, config.MalayalamTvMatchTerms, limit, true, ActionGenres) : Array.Empty<BaseItem>(),
-            "malayalam_shows_comedy" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.MalayalamTvLibraryIds, config.MalayalamTvMatchTerms, limit, true, ComedyGenres) : Array.Empty<BaseItem>(),
-            "malayalam_shows_crime" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.MalayalamTvLibraryIds, config.MalayalamTvMatchTerms, limit, true, CrimeGenres) : Array.Empty<BaseItem>(),
-            "malayalam_shows_family" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.MalayalamTvLibraryIds, config.MalayalamTvMatchTerms, limit, true, FamilyGenres) : Array.Empty<BaseItem>(),
-            "malayalam_shows_mystery" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.MalayalamTvLibraryIds, config.MalayalamTvMatchTerms, limit, true, MysteryGenres) : Array.Empty<BaseItem>(),
+            "malayalam_shows_romance" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.MalayalamTvLibraryIds, config.MalayalamTvMatchTerms, limit, true, payload.AdditionalData ?? string.Empty, RomanceGenres) : Array.Empty<BaseItem>(),
+            "malayalam_shows_thriller" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.MalayalamTvLibraryIds, config.MalayalamTvMatchTerms, limit, true, payload.AdditionalData ?? string.Empty, ThrillerGenres) : Array.Empty<BaseItem>(),
+            "malayalam_shows_action" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.MalayalamTvLibraryIds, config.MalayalamTvMatchTerms, limit, true, payload.AdditionalData ?? string.Empty, ActionGenres) : Array.Empty<BaseItem>(),
+            "malayalam_shows_comedy" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.MalayalamTvLibraryIds, config.MalayalamTvMatchTerms, limit, true, payload.AdditionalData ?? string.Empty, ComedyGenres) : Array.Empty<BaseItem>(),
+            "malayalam_shows_crime" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.MalayalamTvLibraryIds, config.MalayalamTvMatchTerms, limit, true, payload.AdditionalData ?? string.Empty, CrimeGenres) : Array.Empty<BaseItem>(),
+            "malayalam_shows_family" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.MalayalamTvLibraryIds, config.MalayalamTvMatchTerms, limit, true, payload.AdditionalData ?? string.Empty, FamilyGenres) : Array.Empty<BaseItem>(),
+            "malayalam_shows_mystery" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.MalayalamTvLibraryIds, config.MalayalamTvMatchTerms, limit, true, payload.AdditionalData ?? string.Empty, MysteryGenres) : Array.Empty<BaseItem>(),
             "english_movies_recent" => GetRecentlyAddedMovies(payload.UserId, config.EnglishMovieLibraryIds, limit),
             "english_movies_latest" => GetLatestMovies(payload.UserId, config.EnglishMovieLibraryIds, limit),
-            "english_movies_romance" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.EnglishMovieLibraryIds, limit, RomanceGenres) : Array.Empty<BaseItem>(),
-            "english_movies_thriller" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.EnglishMovieLibraryIds, limit, ThrillerGenres) : Array.Empty<BaseItem>(),
-            "english_movies_action" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.EnglishMovieLibraryIds, limit, ActionGenres) : Array.Empty<BaseItem>(),
-            "english_movies_comedy" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.EnglishMovieLibraryIds, limit, ComedyGenres) : Array.Empty<BaseItem>(),
-            "english_movies_crime" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.EnglishMovieLibraryIds, limit, CrimeGenres) : Array.Empty<BaseItem>(),
-            "english_movies_family" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.EnglishMovieLibraryIds, limit, FamilyGenres) : Array.Empty<BaseItem>(),
-            "english_movies_mystery" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.EnglishMovieLibraryIds, limit, MysteryGenres) : Array.Empty<BaseItem>(),
+            "english_movies_romance" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.EnglishMovieLibraryIds, limit, payload.AdditionalData ?? string.Empty, RomanceGenres) : Array.Empty<BaseItem>(),
+            "english_movies_thriller" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.EnglishMovieLibraryIds, limit, payload.AdditionalData ?? string.Empty, ThrillerGenres) : Array.Empty<BaseItem>(),
+            "english_movies_action" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.EnglishMovieLibraryIds, limit, payload.AdditionalData ?? string.Empty, ActionGenres) : Array.Empty<BaseItem>(),
+            "english_movies_comedy" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.EnglishMovieLibraryIds, limit, payload.AdditionalData ?? string.Empty, ComedyGenres) : Array.Empty<BaseItem>(),
+            "english_movies_crime" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.EnglishMovieLibraryIds, limit, payload.AdditionalData ?? string.Empty, CrimeGenres) : Array.Empty<BaseItem>(),
+            "english_movies_family" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.EnglishMovieLibraryIds, limit, payload.AdditionalData ?? string.Empty, FamilyGenres) : Array.Empty<BaseItem>(),
+            "english_movies_mystery" => config.EnableGenreShelves ? GetGenreMovies(payload.UserId, config.EnglishMovieLibraryIds, limit, payload.AdditionalData ?? string.Empty, MysteryGenres) : Array.Empty<BaseItem>(),
             "english_shows_recent" => GetRecentlyAddedShows(payload.UserId, config.EnglishTvLibraryIds, string.Empty, limit, false),
             "english_shows_latest" => GetLatestShows(payload.UserId, config.EnglishTvLibraryIds, string.Empty, limit, false),
-            "english_shows_romance" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.EnglishTvLibraryIds, string.Empty, limit, false, RomanceGenres) : Array.Empty<BaseItem>(),
-            "english_shows_thriller" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.EnglishTvLibraryIds, string.Empty, limit, false, ThrillerGenres) : Array.Empty<BaseItem>(),
-            "english_shows_action" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.EnglishTvLibraryIds, string.Empty, limit, false, ActionGenres) : Array.Empty<BaseItem>(),
-            "english_shows_comedy" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.EnglishTvLibraryIds, string.Empty, limit, false, ComedyGenres) : Array.Empty<BaseItem>(),
-            "english_shows_crime" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.EnglishTvLibraryIds, string.Empty, limit, false, CrimeGenres) : Array.Empty<BaseItem>(),
-            "english_shows_family" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.EnglishTvLibraryIds, string.Empty, limit, false, FamilyGenres) : Array.Empty<BaseItem>(),
-            "english_shows_mystery" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.EnglishTvLibraryIds, string.Empty, limit, false, MysteryGenres) : Array.Empty<BaseItem>(),
+            "english_shows_romance" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.EnglishTvLibraryIds, string.Empty, limit, false, payload.AdditionalData ?? string.Empty, RomanceGenres) : Array.Empty<BaseItem>(),
+            "english_shows_thriller" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.EnglishTvLibraryIds, string.Empty, limit, false, payload.AdditionalData ?? string.Empty, ThrillerGenres) : Array.Empty<BaseItem>(),
+            "english_shows_action" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.EnglishTvLibraryIds, string.Empty, limit, false, payload.AdditionalData ?? string.Empty, ActionGenres) : Array.Empty<BaseItem>(),
+            "english_shows_comedy" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.EnglishTvLibraryIds, string.Empty, limit, false, payload.AdditionalData ?? string.Empty, ComedyGenres) : Array.Empty<BaseItem>(),
+            "english_shows_crime" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.EnglishTvLibraryIds, string.Empty, limit, false, payload.AdditionalData ?? string.Empty, CrimeGenres) : Array.Empty<BaseItem>(),
+            "english_shows_family" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.EnglishTvLibraryIds, string.Empty, limit, false, payload.AdditionalData ?? string.Empty, FamilyGenres) : Array.Empty<BaseItem>(),
+            "english_shows_mystery" => config.EnableGenreShelves ? GetGenreShows(payload.UserId, config.EnglishTvLibraryIds, string.Empty, limit, false, payload.AdditionalData ?? string.Empty, MysteryGenres) : Array.Empty<BaseItem>(),
             _ => Array.Empty<BaseItem>(),
         };
 
@@ -148,49 +134,6 @@ public sealed class CuratedSectionResultsProvider
             .ToArray();
 
         return new QueryResult<BaseItemDto>(dtoItems);
-    }
-
-    private static bool TryBuildSectionRequest(object? payload, out SectionRequest request)
-    {
-        if (payload is SectionRequest typedRequest)
-        {
-            request = typedRequest;
-            return true;
-        }
-
-        request = new SectionRequest();
-        if (payload is null)
-        {
-            return false;
-        }
-
-        var payloadType = payload.GetType();
-        var userIdValue = payloadType.GetProperty("UserId")?.GetValue(payload);
-        var additionalDataValue = payloadType.GetProperty("AdditionalData")?.GetValue(payload);
-
-        if (!TryConvertToGuid(userIdValue, out var userId))
-        {
-            return false;
-        }
-
-        request.UserId = userId;
-        request.AdditionalData = additionalDataValue?.ToString() ?? string.Empty;
-        return true;
-    }
-
-    private static bool TryConvertToGuid(object? value, out Guid guid)
-    {
-        switch (value)
-        {
-            case Guid typedGuid:
-                guid = typedGuid;
-                return true;
-            case string raw when Guid.TryParse(raw, out guid):
-                return true;
-            default:
-                guid = Guid.Empty;
-                return false;
-        }
     }
 
     private DtoOptions BuildDtoOptions()
@@ -340,7 +283,7 @@ public sealed class CuratedSectionResultsProvider
             .Take(limit);
     }
 
-    private IEnumerable<BaseItem> GetGenreMovies(Guid userId, string configuredLibraryIds, int limit, string[] genres)
+    private IEnumerable<BaseItem> GetGenreMovies(Guid userId, string configuredLibraryIds, int limit, string shelfKey, string[] genres)
     {
         var user = _userManager.GetUserById(userId);
         if (user is null)
@@ -361,18 +304,11 @@ public sealed class CuratedSectionResultsProvider
             .Where(IsCuratedMetadataSafe)
             .Where(x => MatchesGenres(x, genres))
             .DistinctBy(x => x.Id)
-            .Select(x => new
-            {
-                Item = x,
-                SortDate = GetTrustedReleaseSortDate(x),
-            })
-            .Where(x => x.SortDate.HasValue)
-            .OrderByDescending(x => x.SortDate!.Value)
-            .Select(x => x.Item)
+            .OrderBy(x => BuildStableMixKey(shelfKey, x.Id))
             .Take(limit);
     }
 
-    private IEnumerable<BaseItem> GetGenreShows(Guid userId, string configuredLibraryIds, string configuredMatchTerms, int limit, bool useDefaultMalayalamTerms, string[] genres)
+    private IEnumerable<BaseItem> GetGenreShows(Guid userId, string configuredLibraryIds, string configuredMatchTerms, int limit, bool useDefaultMalayalamTerms, string shelfKey, string[] genres)
     {
         var user = _userManager.GetUserById(userId);
         if (user is null)
@@ -395,14 +331,7 @@ public sealed class CuratedSectionResultsProvider
             .Where(x => MatchesConfiguredTerms(x, configuredMatchTerms, useDefaultMalayalamTerms))
             .Where(x => MatchesGenres(x, genres))
             .DistinctBy(x => x.Id)
-            .Select(x => new
-            {
-                Item = x,
-                SortDate = GetTrustedReleaseSortDate(x),
-            })
-            .Where(x => x.SortDate.HasValue)
-            .OrderByDescending(x => x.SortDate!.Value)
-            .Select(x => x.Item)
+            .OrderBy(x => BuildStableMixKey(shelfKey, x.Id))
             .Take(limit);
     }
 
@@ -543,6 +472,12 @@ public sealed class CuratedSectionResultsProvider
         }
 
         return item.PremiereDate.HasValue || item.ProductionYear.HasValue;
+    }
+
+    private static string BuildStableMixKey(string shelfKey, Guid itemId)
+    {
+        var input = Encoding.UTF8.GetBytes($"{shelfKey}:{itemId:N}");
+        return Convert.ToHexString(SHA256.HashData(input));
     }
 
     private DateTime? GetTrustedReleaseSortDate(BaseItem item)
