@@ -9,8 +9,10 @@ Velvet Rows is a Jellyfin companion plugin that publishes curated homepage rails
 
 It is designed to pair with [Home Screen Sections](https://github.com/IAmParadox27/jellyfin-plugin-home-sections) and [Plugin Pages](https://github.com/IAmParadox27/jellyfin-plugin-pages), then surface shelves such as:
 
-- Malayalam Movies - Newly Added
-- Malayalam Movies - Newly Released
+- Malayalam Movies - Spotlight Mix
+- Malayalam Movies - Wildcard Rotation
+- Malayalam Movies - Recently Added
+- Malayalam Movies - Latest
 - Malayalam Movies - Romance and Love
 - Malayalam Movies - Thriller and Suspense
 - Malayalam Movies - Action and Adventure
@@ -18,10 +20,14 @@ It is designed to pair with [Home Screen Sections](https://github.com/IAmParadox
 - Malayalam Movies - Crime and Mystery
 - Malayalam Movies - Family
 - Malayalam Movies - Mystery
-- Malayalam TV Shows - Newly Added
-- Malayalam TV Shows - Newly Released
-- English Movies - Newly Added
-- English Movies - Newly Released
+- Malayalam TV Shows - Spotlight Mix
+- Malayalam TV Shows - Wildcard Rotation
+- Malayalam TV Shows - Recently Added
+- Malayalam TV Shows - Latest
+- English Movies - Spotlight Mix
+- English Movies - Wildcard Rotation
+- English Movies - Recently Added
+- English Movies - Latest
 - English Movies - Romance and Love
 - English Movies - Thriller and Suspense
 - English Movies - Action and Adventure
@@ -29,8 +35,10 @@ It is designed to pair with [Home Screen Sections](https://github.com/IAmParadox
 - English Movies - Crime and Mystery
 - English Movies - Family
 - English Movies - Mystery
-- English TV Shows - Newly Added
-- English TV Shows - Newly Released
+- English TV Shows - Spotlight Mix
+- English TV Shows - Wildcard Rotation
+- English TV Shows - Recently Added
+- English TV Shows - Latest
 
 ## Why it exists
 
@@ -39,8 +47,10 @@ It is designed to pair with [Home Screen Sections](https://github.com/IAmParadox
 ## Highlights
 
 - Dedicated movie shelves for English and Malayalam libraries
+- Core shelves rotate mixed picks on every reload instead of repeating a fixed stable order
+- Explicit `Recently Added` and `Latest` shelves stay available alongside the rotating mixes
 - Genre-driven shelves for romance, thriller, action, comedy, crime, family, and mystery discovery
-- Genre shelves always pull a mixed set from the full matched library instead of ranking by newest titles
+- Genre shelves always pull a rotating mixed set from the full matched library instead of ranking by newest titles
 - English TV shelves for your main TV library
 - Metadata-aware Malayalam TV shelves that can filter a shared TV library or use a dedicated Malayalam TV library
 - Library-group Explore pages delivered through Plugin Pages
@@ -51,11 +61,13 @@ It is designed to pair with [Home Screen Sections](https://github.com/IAmParadox
 - GitHub Actions for CI builds and tagged zip releases
 - Custom Jellyfin plugin repository manifest for simpler future installs and updates
 
-## Release logic
+## Shelf logic
 
-- `Newly Added`: sorted by recent library additions
-- `Newly Released` for movies and shows: sorted by premiere date first, then production year
-- Genre shelves: require clean metadata and matching Jellyfin genres, then pull a mixed library-wide set instead of newest-first ranking
+- `Spotlight Mix`: rotates through fresh additions, well-rated titles, library staples, and deeper catalog pulls
+- `Wildcard Rotation`: swings wider across the full matched library so reloads surface more surprising combinations
+- `Recently Added`: stays strict and library-addition-first for a familiar fresh-arrivals rail
+- `Latest`: stays strict and release-date-first for people who want the newest releases fast
+- Genre shelves: require clean metadata and matching Jellyfin genres, then use the same rotating mix engine inside that mood lane
 - Low-confidence filename titles can be hidden from all curated shelves
 
 ## Configuration
@@ -81,7 +93,7 @@ Velvet Rows also registers dedicated user-facing pages through Plugin Pages:
 - Malayalam TV Explore
 - English TV Explore
 
-Each page bundles newly added, newly released, and genre-led shelves for that library group.
+Each page bundles Spotlight Mix, Wildcard Rotation, explicit Recently Added and Latest shelves, and genre-led shelves for that library group.
 
 ## Client note
 

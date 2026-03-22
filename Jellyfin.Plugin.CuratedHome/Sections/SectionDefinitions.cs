@@ -11,14 +11,22 @@ internal static class SectionDefinitions
 
     private static IReadOnlyList<SectionDefinition> Core { get; } =
     [
-        new("CuratedMalayalamMoviesRecentlyAdded", "Malayalam Movies - Newly Added", "malayalam_movies_recent", MalayalamMoviesPageRoute),
-        new("CuratedMalayalamMoviesLatest", "Malayalam Movies - Newly Released", "malayalam_movies_latest", MalayalamMoviesPageRoute),
-        new("CuratedMalayalamShowsRecentlyAdded", "Malayalam TV Shows - Newly Added", "malayalam_shows_recent", MalayalamShowsPageRoute),
-        new("CuratedMalayalamShowsLatest", "Malayalam TV Shows - Newly Released", "malayalam_shows_latest", MalayalamShowsPageRoute),
-        new("CuratedEnglishMoviesRecentlyAdded", "English Movies - Newly Added", "english_movies_recent", EnglishMoviesPageRoute),
-        new("CuratedEnglishMoviesLatest", "English Movies - Newly Released", "english_movies_latest", EnglishMoviesPageRoute),
-        new("CuratedEnglishShowsRecentlyAdded", "English TV Shows - Newly Added", "english_shows_recent", EnglishShowsPageRoute),
-        new("CuratedEnglishShowsLatest", "English TV Shows - Newly Released", "english_shows_latest", EnglishShowsPageRoute),
+        new("CuratedMalayalamMoviesRecentlyAdded", "Malayalam Movies - Spotlight Mix", "malayalam_movies_recent", MalayalamMoviesPageRoute),
+        new("CuratedMalayalamMoviesLatest", "Malayalam Movies - Wildcard Rotation", "malayalam_movies_latest", MalayalamMoviesPageRoute),
+        new("CuratedMalayalamMoviesRecentAdds", "Malayalam Movies - Recently Added", "malayalam_movies_recently_added", MalayalamMoviesPageRoute),
+        new("CuratedMalayalamMoviesLatestRelease", "Malayalam Movies - Latest", "malayalam_movies_latest_releases", MalayalamMoviesPageRoute),
+        new("CuratedMalayalamShowsRecentlyAdded", "Malayalam TV Shows - Spotlight Mix", "malayalam_shows_recent", MalayalamShowsPageRoute),
+        new("CuratedMalayalamShowsLatest", "Malayalam TV Shows - Wildcard Rotation", "malayalam_shows_latest", MalayalamShowsPageRoute),
+        new("CuratedMalayalamShowsRecentAdds", "Malayalam TV Shows - Recently Added", "malayalam_shows_recently_added", MalayalamShowsPageRoute),
+        new("CuratedMalayalamShowsLatestRelease", "Malayalam TV Shows - Latest", "malayalam_shows_latest_releases", MalayalamShowsPageRoute),
+        new("CuratedEnglishMoviesRecentlyAdded", "English Movies - Spotlight Mix", "english_movies_recent", EnglishMoviesPageRoute),
+        new("CuratedEnglishMoviesLatest", "English Movies - Wildcard Rotation", "english_movies_latest", EnglishMoviesPageRoute),
+        new("CuratedEnglishMoviesRecentAdds", "English Movies - Recently Added", "english_movies_recently_added", EnglishMoviesPageRoute),
+        new("CuratedEnglishMoviesLatestRelease", "English Movies - Latest", "english_movies_latest_releases", EnglishMoviesPageRoute),
+        new("CuratedEnglishShowsRecentlyAdded", "English TV Shows - Spotlight Mix", "english_shows_recent", EnglishShowsPageRoute),
+        new("CuratedEnglishShowsLatest", "English TV Shows - Wildcard Rotation", "english_shows_latest", EnglishShowsPageRoute),
+        new("CuratedEnglishShowsRecentAdds", "English TV Shows - Recently Added", "english_shows_recently_added", EnglishShowsPageRoute),
+        new("CuratedEnglishShowsLatestRelease", "English TV Shows - Latest", "english_shows_latest_releases", EnglishShowsPageRoute),
     ];
 
     private static IReadOnlyList<SectionDefinition> GenreShelves { get; } =

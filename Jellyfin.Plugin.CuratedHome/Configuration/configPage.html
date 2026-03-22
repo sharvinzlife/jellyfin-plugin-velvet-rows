@@ -32,7 +32,7 @@
                     <div class="heroCopy">
                         <span class="eyebrow">Curated home screen plugin</span>
                         <h1>Velvet Rows</h1>
-                        <p>Design elegant discovery rails for Malayalam and English media with cleaner metadata filtering, genre shelves, and dedicated Velvet Rows Explore pages for each library group.</p>
+                        <p>Design elegant discovery rails for Malayalam and English media with rotating spotlight mixes, wildcard shelves, explicit latest and recently added rails, cleaner metadata filtering, and dedicated Velvet Rows Explore pages for each library group.</p>
                         <div class="statusChips">
                             <span class="chip live">Home Screen Sections</span>
                             <span class="chip live">Plugin Pages</span>
@@ -67,7 +67,7 @@
                             <input id="enableGenreShelves" class="emby-checkbox" type="checkbox" />
                             <span>
                                 <strong>Enable genre shelves</strong>
-                                <small>Publishes Romance, Thriller, Action, Comedy, Crime, Family, and Mystery shelves as mixed picks from the full configured library on home and in the Explore pages.</small>
+                                <small>Publishes Romance, Thriller, Action, Comedy, Crime, Family, and Mystery shelves as rotating mixed picks from the full configured library on home and in the Explore pages.</small>
                             </span>
                         </label>
 
@@ -122,16 +122,20 @@
                         </div>
                         <div class="logicGrid">
                             <article class="logicCard">
-                                <h3>Newly Added</h3>
-                                <p>Ranks the freshest library additions so OCI transfers and recent drops rise to the top immediately.</p>
+                                <h3>Spotlight Mix</h3>
+                                <p>Blends fresher arrivals, beloved titles, catalog staples, and deeper pulls so every reload feels fuller than a plain latest-first rail.</p>
                             </article>
                             <article class="logicCard">
-                                <h3>Newly Released</h3>
-                                <p>Uses trusted release metadata only, so old filename-style uploads do not pollute your latest shelves.</p>
+                                <h3>Wildcard Rotation</h3>
+                                <p>Pushes the mix wider with adventurous swings across the whole matched library instead of locking onto only recent additions or release dates.</p>
+                            </article>
+                            <article class="logicCard">
+                                <h3>Recently Added and Latest</h3>
+                                <p>Explicit rails stay available for people who still want strict newest-by-added or newest-by-release sorting beside the rotating mixes.</p>
                             </article>
                             <article class="logicCard">
                                 <h3>Genre discovery</h3>
-                                <p>Romance, Thriller, Action, Comedy, Crime, Family, and Mystery shelves pull a mixed library-wide set using Jellyfin genres instead of ranking by newest additions or releases.</p>
+                                <p>Romance, Thriller, Action, Comedy, Crime, Family, and Mystery shelves use the same rotating mix engine, but only inside that mood or genre lane.</p>
                             </article>
                         </div>
                     </section>
@@ -147,7 +151,8 @@
                             <li>Keep Home Screen Sections and Plugin Pages enabled.</li>
                             <li>Use the dedicated Malayalam TV library when available for the cleanest results.</li>
                             <li>Tamil titles in your Malayalam library are intentionally treated as part of the Malayalam shelves.</li>
-                            <li>Genre shelves are always mixed across the full matched library instead of being latest-first.</li>
+                            <li>Spotlight Mix and Wildcard Rotation intentionally change across reloads so the home screen keeps breathing.</li>
+                            <li>Recently Added and Latest stay strict and deterministic beside the rotating rows.</li>
                             <li>Home shelf headers now point into the matching Velvet Rows Explore page when Plugin Pages is available.</li>
                             <li>If you change My Media pinning or genre shelf publishing, restart Jellyfin once so Home Screen Sections re-registers the updated layout.</li>
                         </ul>
